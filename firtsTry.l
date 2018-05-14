@@ -1,11 +1,17 @@
 %{
   #define TK_DIGIT 200
-  #define TK_IDENTIFIER 201
+  #define TK_ID 201
   #define TK_INT 202
   #define TK_REAL 203
   #define TK_BOOL 204
   #define TK_STRING 205
   #define TK_ASSIGN 206
+  #define TK_UNEQUAL 207
+  #define TK_SMAAALLLER 208
+  #define TK_NOT_EQUAL 209
+  #define TK_AND 210
+  #define TK_OR 211
+  #define TK_GREATER_EQUAL 212
   #define KW_AND 250
   #define KW_ARRAY 251
   #define KW_BOOLEAN 252
@@ -37,7 +43,9 @@
   #define KW_UNTIL 278
   #define KW_DOWNTO 279
   #include <stdio.h>
-
+  #include <assert.h>
+  #include <string.h>
+  #include "cgen.h"
   int lineNum = 1;
 
 
@@ -60,13 +68,36 @@ ID             [a-zA-Z][{DIGIT}a-zA-Z_]*
 INT            {DIGIT}{DIGIT}*
 REAL           ("."{INT})|({INT}("."{INT}?)?)([eE][+-]?{INT})?
 BOOLEAN        ("true"|"false")
-STRING           (['](.)*['])|(["](.)*["])
+STRING         (['](.)*['])|(["](.)*["])
 
 
-%x comment
+%x comments
 %x macro
 
 %%
+
+@defmacro[ \r\t]+       BEGIN(macro);
+<macro>{ID}  {
+                /* Store macro name */
+                char* name = strdup(yytext);
+                char* def = NULL;
+                size_t deflen = 0;
+                char c;
+
+                FILE* deff = open_memstream(&def, &deflen);
+
+                while((c=input())!='\n')
+                  if (c != '(' && c != ')')
+                    fputc(c, deff);
+                fclose(deff);
+
+                if(!set_macro(name, def))
+                  printf("lexer error: failed to define macro '%s'\n", name);
+                BEGIN(INITIAL);
+};
+
+
+
 
 and             return KW_AND;
 array           return KW_ARRAY;
@@ -101,14 +132,12 @@ downto          return KW_DOWNTO;
 
 
 
-
-{DIGIT}	    { yylval.str = strdup(yytext); return TK_DIGIT;}
-{ID}        { yylval.str = strdup(yytext); return TK_IDENTIFIER; }
-{INT}       { yylval.str = strdup(yytext); return TK_INT; }
-{REAL}      { yylval.str = strdup(yytext); return TK_REAL; }
-{BOOL}	    { yylval.str = strdup(yytext); return TK_BOOL; }
-{STRING}    { yylval.str = strdup(yytext); return TK_STRING;}
-{CHAR}      { yylval.str = strdup(yytext); return TK_CHAR;}
+{ID}        { return TK_ID; }
+{DIGIT}	    { return TK_DIGIT; }
+{INT}       { return TK_INT; }
+{REAL}      { return TK_REAL; }
+{BOOLEAN}	  { return TK_BOOL; }
+{STRING}    { return TK_STRING; }
 
 
 
@@ -117,15 +146,15 @@ downto          return KW_DOWNTO;
 "*"         return '*';
 "/"         return '/';
 "="	        return '=';
-"<>"        return '<>';
+"<>"        return TK_UNEQUAL;
 
 "<"	        return '<';
 ">"	        return '>';
-"<="	      return LESS_EQUAL;
-">="	      return GREATER_EQUAL;
-"!="	      return NOT_EQUAL;
-"&&"	      return AND;
-"||"	      return OR;
+"<="	      return TK_SMAAALLLER;
+">="	      return TK_GREATER_EQUAL;
+"!="	      return TK_NOT_EQUAL;
+"&&"	      return TK_AND;
+"||"	      return TK_OR;
 "!"	        return '!';
 
 
@@ -142,31 +171,8 @@ downto          return KW_DOWNTO;
 
 <comments>[^*\n]*
 <comments>"*"+[^*)\n]*
-<comments>\n          ++lineNum
-<comments>"*"+"/"     BEGIN(0);
-
-
-
-@defmacro[ \r\t]+       BEGIN(macro);
-<macro>{IDS}  {
-                /* Store macro name */
-                char* name = strdup(yytext);
-                char* def = NULL;
-                size_t deflen = 0;
-                char c;
-
-                FILE* deff = open_memstream(&def, &deflen);
-
-                while((c=input())!='\n')
-                  if (c != '(' && c != ')')
-                    fputc(c, deff);
-                fclose(deff);
-
-                if(!set_macro(name, def))
-                  printf("lexer error: failed to define macro '%s'\n", name);
-                BEGIN(INITIAL);
-};
-
+<comments>\n          ++lineNum;
+<comments>"*"+")"     BEGIN(INITIAL);
 
 
 
