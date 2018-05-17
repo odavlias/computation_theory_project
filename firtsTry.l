@@ -45,6 +45,12 @@
   #define KW_BOOL_TRUE 280
   #define KW_BOOL_FALSE 281
   #define KW_TYPE 282
+  #define KW_READSTRING 283
+  #define KW_READINTEGER 284
+  #define KW_READREAL 285
+  #define KW_WRITESTRING 286
+  #define KW_WRITEINTEGER 287
+  #define KW_WRITEREAL 288
   #include <stdio.h>
   #include <assert.h>
   #include <string.h>
@@ -172,6 +178,18 @@ false           { printf("token KW_BOOL_FALSE: %s in line num %d\n", yytext, lin
                 return KW_BOOL_FALSE; }
 type            { printf("token KW_TYPE: %s in line num %d\n", yytext, lineNum);
                 return KW_TYPE; }
+readString      { printf("token KW_READSTRING: %s in line num %d\n", yytext, lineNum);
+                return KW_READSTRING; }
+readInteger     { printf("token KW_READINTEGER: %s in line num %d\n", yytext, lineNum);
+                return KW_READINTEGER; }
+readReal        { printf("token KW_READREAL: %s in line num %d\n", yytext, lineNum);
+                return KW_READREAL; }
+writeString     { printf("token KW_WRITESTRING: %s in line num %d\n", yytext, lineNum);
+                return KW_WRITESTRING; }
+writeInteger    { printf("token KW_WRITEINTEGER: %s in line num %d\n", yytext, lineNum);
+                return KW_WRITEINTEGER; }
+writeReal       { printf("token KW_WRITEREAL: %s in line num %d\n", yytext, lineNum);
+                return KW_WRITEREAL; }
 
 
 
