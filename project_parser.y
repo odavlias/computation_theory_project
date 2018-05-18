@@ -92,7 +92,7 @@ extern int line_num;
 
 
 
-%start input
+%start program
 
 %type <crepr> program_decl body statements statement_list
 %type <crepr> statement proc_call arguments
@@ -102,16 +102,60 @@ extern int line_num;
 
 %%
 
-input: program {
+/* Program consists of 4 parts (3 mandatory and 1 optional) *
+ * * program header (mandatory)                             *
+ * * declarations (optional)                                *
+ * * body (mandatory)                                       *
+ * * end token                                              *
+ ************************************************************/
+program: program_header program_declarations program_body program_end  {
 	/* We have a successful parse!
 		Check for any errors and generate output.
 	*/
 	if(yyerror_count==0) {
-		puts(c_prologue);
-		printf("/* program  %s */ \n\n", $1);
-		printf("int main() %s \n", $2);
+		puts(c_prologue); // include etc
+		printf("/* program  %s */ \n\n", $1); // program name as comment
+		printf($2); // declaration part
+		printf("int main()\n{\n\t%s}\n", $3); // program main
 	}
 };
+
+/* Program header follows the template: program <program_name>;*/
+program_header: KW_PROGRAM TK_IDENT TK_SEMCOLUMN { $$ = $2 };
+
+/* program_declarations is optional *
+ * it may include:                  *
+ * * type(s) declaration(s)         *
+ * * variables declarations         *
+ * * subroutines                    *
+ ************************************/
+program_declarations: 																							{ $$ = template(""); }
+										  | program_declarations types_declaration   		{ $$ = template("%s\n%s", $1, $2); }
+											| program_declarations variables_declaration  { $$ = template("%s\n%s", $1, $2); }
+											| program_declarations subroutines  					{ $$ = template("%s\n%s", $1, $2); };
+
+/* */
+types_declaration: { $$ = template(""); };
+
+variables_declaration: { $$ = template(""); };
+
+subroutines: 													{ $$ = template(""); }
+						 | subroutines function		{ $$ = template("%s\n%s", $1, $2); }
+						 | subroutines procedure  { $$ = template("%s\n%s", $1, $2); };
+
+function: {};
+
+procedure: procedure_header procedure_declarations procedure_body {};
+
+procedure_header: KW_PROCEDURE TK_IDENT TK_LPAR procedure_arguments TK_RPAR TK_SEMCOLUMN  {};
+
+procedure_declarations: program_declarations  { $$ = template("%s", $1); };
+
+procedure_body: program_body  { $$ = template("%s", $1); };
+
+program_body: complex_command { $$ = template("%s", $1); };
+
+program_end: TK_POINT { $$ = template(""); };
 
 program:  program_decl body  '.' {};
 	| program_decl var_decl body  '.' {};
@@ -119,13 +163,11 @@ program:  program_decl body  '.' {};
 	| program_decl program body  '.' {};
 
 program_decl : KW_PROGRAM IDENT ';'  	{ $$ = $2; };
-/* help **
- * $$ = template("{\n %s \n }\n", $2); */
 
 /** Commands */
 
 /* commads pattern */
-command_pattern: complex_commands TK_SEMCOLUMN 		{ $$ = template("%s", $1); }
+command_pattern: complex_command TK_SEMCOLUMN 		{ $$ = template("%s", $1); }
 								 | assign_command									{ $$ = template("%s", $1); }
 								 | special_assign									{ $$ = template("%s", $1); }
 								 | if_statement										{ $$ = template("%s", $1); }
@@ -135,7 +177,7 @@ command_pattern: complex_commands TK_SEMCOLUMN 		{ $$ = template("%s", $1); }
 								 | goto_command										{ $$ = template("%s", $1); }
 								 | return_command									{ $$ = template("%s", $1); }
 								 | call_function									{ $$ = template("%s", $1); }
-								 | TK_SEMCOLUMN complex_commands  { $$ = template("%s", $2); }
+								 | TK_SEMCOLUMN complex_command  { $$ = template("%s", $2); }
 								 | TK_SEMCOLUMN assign_command		{ $$ = template("%s", $2); }
 								 | TK_SEMCOLUMN special_assign		{ $$ = template("%s", $2); }
 								 | TK_SEMCOLUMN if_statement			{ $$ = template("%s", $2); }
@@ -148,7 +190,7 @@ command_pattern: complex_commands TK_SEMCOLUMN 		{ $$ = template("%s", $1); }
 
 
 /* complex commands */
-complex_commands: KW_BEGIN command_list KW_END { $$ = template("%s", $2); };
+complex_command: KW_BEGIN command_list KW_END { $$ = template("%s", $2); };
 
 /* command list */
 command_list: 																 						{ $$ = template(""); }
