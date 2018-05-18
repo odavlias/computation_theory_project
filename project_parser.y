@@ -140,14 +140,18 @@ types_declaration: { $$ = template(""); };
 variables_declaration: { $$ = template(""); };
 
 subroutines: 													{ $$ = template(""); }
-						 | subroutines function		{ $$ = template("%s\n%s", $1, $2); }
-						 | subroutines procedure  { $$ = template("%s\n%s", $1, $2); };
+						 | subroutines TK_SEMCOLUMN function   { $$ = template("%s\n%s", $1, $3); }
+						 | subroutines TK_SEMCOLUMN procedure  { $$ = template("%s\n%s", $1, $3); };
 
 function: {};
 
 procedure: procedure_header procedure_declarations procedure_body {};
 
 procedure_header: KW_PROCEDURE TK_IDENT TK_LPAR procedure_arguments TK_RPAR TK_SEMCOLUMN  {};
+
+procedure_arguments: { $$ = template(""); }
+										 | TK_IDENT TK_COLON data_type {}
+										 | procedure_arguments TK_COMMA TK_IDENT TK_COLON data_type {};
 
 procedure_declarations: program_declarations  { $$ = template("%s", $1); };
 
@@ -157,12 +161,17 @@ program_body: complex_command { $$ = template("%s", $1); };
 
 program_end: TK_POINT { $$ = template(""); };
 
-program:  program_decl body  '.' {};
-	| program_decl var_decl body  '.' {};
-	| program_decl var_decl program body  '.' {};
-	| program_decl program body  '.' {};
+basic_data_type: KW_INTEGER    { $$ = template("int"); }
+								 | KW_BOOLEAN  { $$ = template("int"); }
+								 | KW_CHAR		 { $$ = template("char"); }
+								 | KW_REAL		 { $$ = template("double"); }
 
-program_decl : KW_PROGRAM IDENT ';'  	{ $$ = $2; };
+data_type: basic_data_type  { $$ = template($1); }
+					 | KW_ARRAY brackets KW_OF basic_data_type  { $$ = template("%s [%s]", $4, $2); }
+					 | KW_ARRAY KW_OF basic_data_type  { $$ = template("%s*", $3); };
+
+brackets: TK_LBRACKET expression TK_RBRACKET  { $$ = template("[%s]", $2); }
+					brakets TK_LBRACKET expression TK_RBRACKET  { $$ = template("%s [%s]", $1, $3); };
 
 /** Commands */
 
@@ -325,7 +334,6 @@ expression: POSINT 							/* Default action: $$ = $1 */
 					|
 %%
 
-sadf
 
 int main()
 {
