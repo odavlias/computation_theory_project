@@ -94,11 +94,33 @@ extern int line_num;
 
 %start program
 
-%type <crepr> program_decl body statements statement_list
-%type <crepr> statement proc_call arguments
-%type <crepr> arglist expression
-%type <crepr> var_decl
-%type <crepr> program
+%type <crepr> program_header
+%type <crepr> program_declarations
+%type <crepr> program_body
+%type <crepr> program_end
+%type <crepr> types_declaration
+%type <crepr> variables_declaration
+%type <crepr> subroutines
+%type <crepr> function
+%type <crepr> procedure
+%type <crepr> procedure_header
+%type <crepr> procedure_declarations
+%type <crepr> procedure_body
+%type <crepr> basic_data_type
+%type <crepr> data_type
+%type <crepr> brackets
+%type <crepr> command_pattern
+%type <crepr> complex_command
+%type <crepr> command_list
+%type <crepr> assign_command
+%type <crepr> special_assign
+%type <crepr> if_statement
+%type <crepr> for_loop
+%type <crepr> while_loop
+%type <crepr> label_command
+%type <crepr> goto_command
+%type <crepr> return_command
+%type <crepr> call_subroutine
 
 %%
 
@@ -175,7 +197,7 @@ brackets: TK_LBRACKET expression TK_RBRACKET  { $$ = template("[%s]", $2); }
 
 /** Commands */
 
-/* commads pattern */
+/* commands pattern */
 command_pattern: complex_command TK_SEMCOLUMN  { $$ = template("%s", $1); }
 								 | assign_command  { $$ = template("%s", $1); }
 								 | special_assign  { $$ = template("%s", $1); }
@@ -243,7 +265,7 @@ goto_command: KW_GOTO TK_IDENT  { $$ = template("goto %s;", $2); };
 
 return_command: KW_RETURN  { $$ = template("return;"); };
 
-/* TODO: call_function */
+/* TODO: call_subroutine */
 
 
 /* Variable declaration
