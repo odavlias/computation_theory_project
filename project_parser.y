@@ -129,18 +129,18 @@ program_header: KW_PROGRAM TK_IDENT TK_SEMCOLUMN { $$ = $2 };
  * * variables declarations         *
  * * subroutines                    *
  ************************************/
-program_declarations: 																							{ $$ = template(""); }
-										  | program_declarations types_declaration   		{ $$ = template("%s\n%s", $1, $2); }
+program_declarations: { $$ = template(""); }
+										  | program_declarations types_declaration  { $$ = template("%s\n%s", $1, $2); }
 											| program_declarations variables_declaration  { $$ = template("%s\n%s", $1, $2); }
-											| program_declarations subroutines  					{ $$ = template("%s\n%s", $1, $2); };
+											| program_declarations subroutines  { $$ = template("%s\n%s", $1, $2); };
 
 /* */
 types_declaration: { $$ = template(""); };
 
 variables_declaration: { $$ = template(""); };
 
-subroutines: 													{ $$ = template(""); }
-						 | subroutines TK_SEMCOLUMN function   { $$ = template("%s\n%s", $1, $3); }
+subroutines: { $$ = template(""); }
+						 | subroutines TK_SEMCOLUMN function  { $$ = template("%s\n%s", $1, $3); }
 						 | subroutines TK_SEMCOLUMN procedure  { $$ = template("%s\n%s", $1, $3); };
 
 function: {};
@@ -157,14 +157,14 @@ procedure_declarations: program_declarations  { $$ = template("%s", $1); };
 
 procedure_body: program_body  { $$ = template("%s", $1); };
 
-program_body: complex_command { $$ = template("%s", $1); };
+program_body: complex_command  { $$ = template("%s", $1); };
 
-program_end: TK_POINT { $$ = template(""); };
+program_end: TK_POINT  { $$ = template(""); };
 
-basic_data_type: KW_INTEGER    { $$ = template("int"); }
+basic_data_type: KW_INTEGER  { $$ = template("int"); }
 								 | KW_BOOLEAN  { $$ = template("int"); }
-								 | KW_CHAR		 { $$ = template("char"); }
-								 | KW_REAL		 { $$ = template("double"); }
+								 | KW_CHAR  { $$ = template("char"); }
+								 | KW_REAL  { $$ = template("double"); }
 
 data_type: basic_data_type  { $$ = template($1); }
 					 | KW_ARRAY brackets KW_OF basic_data_type  { $$ = template("%s [%s]", $4, $2); }
@@ -176,51 +176,51 @@ brackets: TK_LBRACKET expression TK_RBRACKET  { $$ = template("[%s]", $2); }
 /** Commands */
 
 /* commads pattern */
-command_pattern: complex_command TK_SEMCOLUMN 		{ $$ = template("%s", $1); }
-								 | assign_command									{ $$ = template("%s", $1); }
-								 | special_assign									{ $$ = template("%s", $1); }
-								 | if_statement										{ $$ = template("%s", $1); }
-								 | for_loop												{ $$ = template("%s", $1); }
-								 | while_loop											{ $$ = template("%s", $1); }
-								 | label_command									{ $$ = template("%s", $1); }
-								 | goto_command										{ $$ = template("%s", $1); }
-								 | return_command									{ $$ = template("%s", $1); }
-								 | call_function									{ $$ = template("%s", $1); }
+command_pattern: complex_command TK_SEMCOLUMN  { $$ = template("%s", $1); }
+								 | assign_command  { $$ = template("%s", $1); }
+								 | special_assign  { $$ = template("%s", $1); }
+								 | if_statement  { $$ = template("%s", $1); }
+								 | for_loop  { $$ = template("%s", $1); }
+								 | while_loop  { $$ = template("%s", $1); }
+								 | label_command  { $$ = template("%s", $1); }
+								 | goto_command  { $$ = template("%s", $1); }
+								 | return_command  { $$ = template("%s", $1); }
+								 | call_function  { $$ = template("%s", $1); }
 								 | TK_SEMCOLUMN complex_command  { $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN assign_command		{ $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN special_assign		{ $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN if_statement			{ $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN for_loop					{ $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN while_loop				{ $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN label_command			{ $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN goto_command			{ $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN return_command		{ $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN call_function			{ $$ = template("%s", $2); };
+								 | TK_SEMCOLUMN assign_command  { $$ = template("%s", $2); }
+								 | TK_SEMCOLUMN special_assign  { $$ = template("%s", $2); }
+								 | TK_SEMCOLUMN if_statement  { $$ = template("%s", $2); }
+								 | TK_SEMCOLUMN for_loop  { $$ = template("%s", $2); }
+								 | TK_SEMCOLUMN while_loop  { $$ = template("%s", $2); }
+								 | TK_SEMCOLUMN label_command  { $$ = template("%s", $2); }
+								 | TK_SEMCOLUMN goto_command  { $$ = template("%s", $2); }
+								 | TK_SEMCOLUMN return_command  { $$ = template("%s", $2); }
+								 | TK_SEMCOLUMN call_function  { $$ = template("%s", $2); };
 
 
 /* complex commands */
 complex_command: KW_BEGIN command_list KW_END { $$ = template("%s", $2); };
 
 /* command list */
-command_list: 																 						{ $$ = template(""); }
-							| command_list assign_command    						{ $$ = template("%s\n%s", $1, $2); }
-							| command_list special_assign		 						{ $$ = template("%s\n%s", $1, $2); }
-							| command_list if_statement			 						{ $$ = template("%s\n%s", $1, $2); }
-							| command_list for_loop					 						{ $$ = template("%s\n%s", $1, $2); }
-							| command_list while_loop			   						{ $$ = template("%s\n%s", $1, $2); }
-							| command_list label_command		 						{ $$ = template("%s\n%s", $1, $2); }
-							| command_list goto_command			 						{ $$ = template("%s\n%s", $1, $2); }
-							| command_list return_command    						{ $$ = template("%s\n%s", $1, $2); }
-							| command_list call_function		 						{ $$ = template("%s\n%s", $1, $2); }
+command_list: { $$ = template(""); }
+							| command_list assign_command  { $$ = template("%s\n%s", $1, $2); }
+							| command_list special_assign  { $$ = template("%s\n%s", $1, $2); }
+							| command_list if_statement  { $$ = template("%s\n%s", $1, $2); }
+							| command_list for_loop  { $$ = template("%s\n%s", $1, $2); }
+							| command_list while_loop  { $$ = template("%s\n%s", $1, $2); }
+							| command_list label_command  { $$ = template("%s\n%s", $1, $2); }
+							| command_list goto_command	 { $$ = template("%s\n%s", $1, $2); }
+							| command_list return_command  { $$ = template("%s\n%s", $1, $2); }
+							| command_list call_function  { $$ = template("%s\n%s", $1, $2); }
 							| command_list TK_SEMCOLUMN assign_command  { $$ = template("%s\n%s", $1, $3); }
 							| command_list TK_SEMCOLUMN special_assign	{ $$ = template("%s\n%s", $1, $3); }
-							| command_list TK_SEMCOLUMN if_statement		{ $$ = template("%s\n%s", $1, $3); }
-							| command_list TK_SEMCOLUMN for_loop				{ $$ = template("%s\n%s", $1, $3); }
-							| command_list TK_SEMCOLUMN while_loop			{ $$ = template("%s\n%s", $1, $3); }
-							| command_list TK_SEMCOLUMN label_command		{ $$ = template("%s\n%s", $1, $3); }
-							| command_list TK_SEMCOLUMN goto_command		{ $$ = template("%s\n%s", $1, $3); }
+							| command_list TK_SEMCOLUMN if_statement  { $$ = template("%s\n%s", $1, $3); }
+							| command_list TK_SEMCOLUMN for_loop  { $$ = template("%s\n%s", $1, $3); }
+							| command_list TK_SEMCOLUMN while_loop  { $$ = template("%s\n%s", $1, $3); }
+							| command_list TK_SEMCOLUMN label_command  { $$ = template("%s\n%s", $1, $3); }
+							| command_list TK_SEMCOLUMN goto_command  { $$ = template("%s\n%s", $1, $3); }
 							| command_list TK_SEMCOLUMN return_command  { $$ = template("%s\n%s", $1, $3); }
-							| command_list TK_SEMCOLUMN call_function		{ $$ = template("%s\n%s", $1, $3); };
+							| command_list TK_SEMCOLUMN call_function  { $$ = template("%s\n%s", $1, $3); };
 
 /* simple commands implementation */
 
@@ -229,12 +229,12 @@ assign_command: TK_IDENT TK_ASSIGN expression  { $$ = template("%s = %s;", $1, $
 special_assign: KW_RESULT TK_ASSIGN expression  { $$ = template("result = %s;", $3); };
 
 if_statement: KW_IF expression KW_THEN command_pattern  { $$ = template("if (%s){\n\t%s}\n", $2, $4); }
-						  | if_statement KW_ELSE command_pattern    { $$ = template("else{\n\t%s}\n", $3); };
+						  | if_statement KW_ELSE command_pattern  { $$ = template("else{\n\t%s}\n", $3); };
 
-for_loop: KW_FOR TK_IDENT TK_ASSIGN expression KW_TO expression KW_DO command_pattern 			 { $$ = template("for(%s=%s;%s<=%s;%s++){\n\t%s}\n", $2, $4, $2, $6, $2, $8);}
+for_loop: KW_FOR TK_IDENT TK_ASSIGN expression KW_TO expression KW_DO command_pattern  { $$ = template("for(%s=%s;%s<=%s;%s++){\n\t%s}\n", $2, $4, $2, $6, $2, $8);}
 					| KW_FOR TK_IDENT TK_ASSIGN expression KW_DOWNTO expression KW_DO command_pattern  { $$ = template("for(%s=%s;%s>=%s;%s--){\n\t%s}\n", $2, $4, $2, $6, $2, $8);};
 
-while_loop: KW_WHILE expression KW_DO command_pattern        { $$ = template("while (%s){\n\t%s}\n", $2, $4); }
+while_loop: KW_WHILE expression KW_DO command_pattern  { $$ = template("while (%s){\n\t%s}\n", $2, $4); }
 						| KW_REPEAT command_pattern KW_UNTIL expression  { $$ = template("do{\n\t%s\n} while( %s );", $2, $4); };
 
 label_command: TK_IDENT TK_COLON command_pattern  { $$ = template("%s: %s", $1, $3); };
