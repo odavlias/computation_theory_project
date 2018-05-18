@@ -145,13 +145,13 @@ subroutines: { $$ = template(""); }
 
 function: {};
 
-procedure: procedure_header procedure_declarations procedure_body {};
+procedure: procedure_header procedure_declarations procedure_body { $$ = template("%s{\n\t%s\n%s}", $1, $2, $3); };
 
-procedure_header: KW_PROCEDURE TK_IDENT TK_LPAR procedure_arguments TK_RPAR TK_SEMCOLUMN  {};
+procedure_header: KW_PROCEDURE TK_IDENT TK_LPAR procedure_arguments TK_RPAR TK_SEMCOLUMN  { $$ = template("void %s(%s)", $2, $4); };
 
 procedure_arguments: { $$ = template(""); }
-										 | TK_IDENT TK_COLON data_type {}
-										 | procedure_arguments TK_COMMA TK_IDENT TK_COLON data_type {};
+										 | TK_IDENT TK_COLON data_type { $$ = template("%s %s", $3, $1); }
+										 | procedure_arguments TK_COMMA TK_IDENT TK_COLON data_type { $$ = template("%s, %s %s", $1, $5, $3); };
 
 procedure_declarations: program_declarations  { $$ = template("%s", $1); };
 
