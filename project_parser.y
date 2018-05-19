@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "cgen.h"
+#include "ptuclib.h"
 
 extern int yylex(void);
 extern int line_num;
@@ -265,7 +266,16 @@ goto_command: KW_GOTO TK_IDENT  { $$ = template("goto %s;", $2); };
 return_command: KW_RETURN  { $$ = template("return result;"); };
 
 /* TODO: call_subroutine */
+call_subroutine: default_subroutine  {}
+								 | call_function  {}
+								 | call_procedure  {};
 
+default_subroutine: KW_WRITESTRING TK_LPAR expression TK_RPAR  { $$ = template("writeString(%s);", $3); }
+										| KW_WRITEINTEGER TK_LPAR expression TK_RPAR  { $$ = template("writeInteger(%s);", $3); }
+										| KW_WRITEREAL TK_LPAR expression TK_RPAR  { $$ = template("writeReal(%s);", $3); }
+										| TK_IDENT TK_ASSIGN KW_READSTRING  { $$ = template("%s = readString();", $1); }
+										| TK_IDENT TK_ASSIGN KW_READINTEGER  { $$ = template("%s = readInteger();", $1); }
+										| TK_IDENT TK_ASSIGN KW_READREAL  { $$ = template("%s = readReal();", $1); };
 
 /* Variable declaration
 */
