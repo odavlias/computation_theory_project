@@ -100,19 +100,21 @@ extern int line_num;
 %type <crepr> program_body
 %type <crepr> program_end
 %type <crepr> types_declaration
+%type <crepr> program_types
 %type <crepr> variables_declaration
+%type <crepr> identifiers
 %type <crepr> subroutines
-%type <crepr> function
 %type <crepr> procedure
 %type <crepr> procedure_header
+%type <crepr> subroutine_arguments
 %type <crepr> procedure_declarations
 %type <crepr> procedure_body
 %type <crepr> basic_data_type
 %type <crepr> data_type
 %type <crepr> brackets
-%type <crepr> command_pattern
 %type <crepr> complex_command
 %type <crepr> command_list
+%type <crepr> command
 %type <crepr> assign_command
 %type <crepr> special_assign
 %type <crepr> if_statement
@@ -122,6 +124,18 @@ extern int line_num;
 %type <crepr> goto_command
 %type <crepr> return_command
 %type <crepr> call_subroutine
+%type <crepr> default_subroutine
+%type <crepr> call_function
+%type <crepr> call_procedure
+%type <crepr> call_arguments
+%type <crepr> function
+%type <crepr> function_header
+%type <crepr> expression
+%type <crepr> mathematics
+%type <crepr> compare
+
+
+
 
 %%
 
@@ -163,19 +177,28 @@ types_declaration: KW_TYPE program_types  { $$ = template("%s", $2); };
 program_types: TK_IDENT TK_EQUAL data_type TK_SEMCOLUMN  { $$ = template("typedef %s %s;", $3, $1); };
 							 program_types TK_IDENT TK_EQUAL data_type TK_SEMCOLUMN  { $$ = template("%s\ntypedef %s %s;", $1, $4, $2); };
 
-variables_declaration: { $$ = template(""); };
+variables_declaration: { $$ = template(""); }
+											 | KW_VAR variables_declaration_body  { $$ = template("%s", $2); };
+
+variables_declaration_body: identifiers TK_COLON data_type TK_SEMCOLUMN  { $$ = template("%s %s;", $3, $1); }
+														| variables_declaration_body identifiers TK_COLON data_type TK_SEMCOLUMN  { $$ = template("%s\n%s %s;", $1, $4, %2); };
+
+identifiers: TK_IDENT  { $$ = template("%s", $1); }
+						 | identifiers TK_COMMA TK_IDENT  { $$ = template("%s, %s", $1, $3); };
 
 subroutines: { $$ = template(""); }
 						 | subroutines TK_SEMCOLUMN function  { $$ = template("%s\n%s", $1, $3); }
 						 | subroutines TK_SEMCOLUMN procedure  { $$ = template("%s\n%s", $1, $3); };
 
-function: KW_FUNCTION procedure_declarations procedure_body TK_COLON TK_IDENT{};
+function:  function_header procedure_declarations procedure_body TK_COLON TK_IDENT{ $$ = template("%s{\n\t%s\n%s} %s %s", $1, $2, $3, $4, $5); };
+
+function_header:KW_FUNCTION TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_SEMCOLUMN  { $$ = template("void %s(%s)", $2, $4); };
 
 procedure: procedure_header procedure_declarations procedure_body { $$ = template("%s{\n\t%s\n%s}", $1, $2, $3); };
 
-procedure_header: KW_PROCEDURE TK_IDENT TK_LPAR procedure_arguments TK_RPAR TK_SEMCOLUMN  { $$ = template("void %s(%s)", $2, $4); };
+procedure_header: KW_PROCEDURE TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_SEMCOLUMN  { $$ = template("void %s(%s)", $2, $4); };
 
-procedure_arguments: { $$ = template(""); }
+subroutine_arguments: { $$ = template(""); }
 										 | TK_IDENT TK_COLON data_type { $$ = template("%s %s", $3, $1); }
 										 | procedure_arguments TK_COMMA TK_IDENT TK_COLON data_type { $$ = template("%s, %s %s", $1, $5, $3); };
 
@@ -201,40 +224,16 @@ brackets: TK_LBRACKET expression TK_RBRACKET  { $$ = template("[%s]", $2); }
 
 /** Commands */
 
-/* commands pattern
-command_pattern: complex_command TK_SEMCOLUMN  { $$ = template("%s", $1); }
-								 | assign_command  { $$ = template("%s", $1); }
-								 | special_assign  { $$ = template("%s", $1); }
-								 | if_statement  { $$ = template("%s", $1); }
-								 | for_loop  { $$ = template("%s", $1); }
-								 | while_loop  { $$ = template("%s", $1); }
-								 | label_command  { $$ = template("%s", $1); }
-								 | goto_command  { $$ = template("%s", $1); }
-								 | return_command  { $$ = template("%s", $1); }
-								 | call_function  { $$ = template("%s", $1); }
-								 | TK_SEMCOLUMN complex_command  { $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN assign_command  { $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN special_assign  { $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN if_statement  { $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN for_loop  { $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN while_loop  { $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN label_command  { $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN goto_command  { $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN return_command  { $$ = template("%s", $2); }
-								 | TK_SEMCOLUMN call_function  { $$ = template("%s", $2); };
-*/
-
-
-/* complex command represents a group of commands */
+/* complex command represents a group of commands in between begin and end */
 complex_command: KW_BEGIN command_list KW_END { $$ = template("%s", $2); };
-
 
 /* command list */
 command_list: { $$ = template(""); }
 							| command { $$ = template("%s", $1); }
 							| command_list TK_SEMCOLUMN command { $$ = template("%s\n%s", $1, $2); };
 
-command: assign_command  { $$ = template("%s", $1); }
+command: complex_command  { $$ = template("%s", $1); }
+				 | assign_command  { $$ = template("%s", $1); }
 				 | special_assign  { $$ = template("%s", $1); }
 				 | if_statement  { $$ = template("%s", $1); }
 				 | for_loop  { $$ = template("%s", $1); }
@@ -265,10 +264,10 @@ goto_command: KW_GOTO TK_IDENT  { $$ = template("goto %s;", $2); };
 
 return_command: KW_RETURN  { $$ = template("return result;"); };
 
-/* TODO: call_subroutine */
-call_subroutine: default_subroutine  {}
-								 | call_function  {}
-								 | call_procedure  {};
+/* call_subroutine */
+call_subroutine: default_subroutine  { $$ = template("%s", $1); }
+								 | call_function  { $$ = template("%s", $1); }
+								 | call_procedure  { $$ = template("%s", $1); };
 
 default_subroutine: KW_WRITESTRING TK_LPAR expression TK_RPAR  { $$ = template("writeString(%s);", $3); }
 										| KW_WRITEINTEGER TK_LPAR expression TK_RPAR  { $$ = template("writeInteger(%s);", $3); }
@@ -277,90 +276,48 @@ default_subroutine: KW_WRITESTRING TK_LPAR expression TK_RPAR  { $$ = template("
 										| TK_IDENT TK_ASSIGN KW_READINTEGER  { $$ = template("%s = readInteger();", $1); }
 										| TK_IDENT TK_ASSIGN KW_READREAL  { $$ = template("%s = readReal();", $1); };
 
-/* Variable declaration
-*/
+call_function: TK_IDENT TK_ASSIGN TK_LPAR TK_IDENT call_arguments TK_RPAR  { $$ = template("%s = %s(%s);", $1, $4, $5); };
+
+call_procedure: TK_IDENT TK_LPAR call_arguments TK_RPAR  { $$ = template("%s(%s);", $1, $3); };
+
+call_arguments: { $$ = template(""); }
+								| call_arguments_list  { $$ = template("%s", $1); };
+
+call_arguments_list: expression  { $$ = template("%s", $1); }
+										 | call_arguments_list TK_COMMA expression  { $$ = template("%s, %s", $1, $2); };
+
+expression: TK_INT 				{$$ = template( "%s", $1); }
+					  | TK_REAL				{$$ = template( "%s", $1); }
+					  | TK_STRING 				{$$ = template( "%s", $1); }
+						| TK_IDENT				{$$ = template( "%s", $1); }
+						| TK_BOOL_TRUE			{$$ = template( "1"); }
+						| TK_BOOL_FALSE			{$$ = template( "0"); }
+						| TK_CHAR				{$$ = template( "%s", $1); }
+						| TK_DIGIT				{$$ = template( "%s", $1); }
+						| TK_NOT expression {$$ = template( "%s", $2); }
+						| TK_PLUS expression 			{$$ = template( "+%s", $2); }
+						| TK_MINUS expression 		{$$ = template( "-%s", $2); }
+						| TK_LPAR expression TK_RPAR {$$ = template( "(%s)",$2); }
+						| mathematics {$$ = template( "%s", $1); }
+						| compare {$$ = $1; }
+						| TK_IDENT TK_LPAR function TK_RPAR {$$ = template( "%s(%s)", $1, $3); }
+						| TK_IDENT TK_LPAR TK_RPAR  {$$ = template( "%s()", $1); }
+						| TK_IDENT brackets  {$$ = template( "%s%s", $1, $2); }
+						| TK_IDENT '(' ')' ';' {$$ = template( "%s();\n", $1); };
 
 
-var_decl: KW_VAR var_body {};
-				|
+mathematics:  expression TK_DIVIDE  expression {$$ = template( "%s/%s", $1, $3); }
+						| expression TK_MOD expression {$$ = template( "%s % %s", $1, $3); }
+						| expression TK_PLUS  expression {$$ = template( "%s+%s", $1, $3); }
+						| expression TK_MINUS  expression {$$ = template( "%s-%s", $1, $3); };
 
 
-var_body: IDENT TK_COLON expression TK_SEMCOLUMN  {};
-        | mult_vars TK_COLON expression TK_SEMCOLUMN {};
-				| var_body TK_SEMCOLUMN mult_vars TK_COLON expression TK_SEMCOLUMN {};
+compare: expression TK_GREATER expression {$$ = template( "%s > %s", $1, $3); }
+			 | expression TK_GREATER_EQUAL expression {$$ = template( "%s >= %s", $1, $3); }
+			 | expression TK_EQUAL expression {$$ = template( "%s==%s", $1, $3); }
+			 | expression TK_SMALLER expression {$$ = template( "%s < %s", $1, $3); }
+			 | expression TK_SMALLEREQUAL expression {$$ = template( "%s <= %s", $1, $3); };
 
-mult_vars: IDENT
-			  |  mult_vars TK_COMMA IDENT
-
-
-
-/*
-
-statements: 				        	{ $$ = ""; };
-statements: statement_list		   		{ $$ = $1; };
-
-statement_list: statement
-	      | statement_list ';' statement  { $$ = template("%s%s", $1, $3); };
-
-
-statement: proc_call  						{ $$ = template("%s;\n", $1); };
-
-proc_call: IDENT '(' arguments ')' 			{ $$ = template("%s(%s)", $1, $3); };
-
-*/
-
-
-/* Arguments for the win
-*/
-arguments :									{ $$ = ""; }
-	 	  | arglist 						{ $$ = $1; };
-
-arglist: expression							{ $$ = $1; }
-       | arglist ',' expression 			{ $$ = template("%s,%s", $1, $3);  };
-
-
-
-/* Expressions simple or not here i come
-expr:
-  POSINT {$$ = template( "%s", $1);}
-| REAL {$$ = template( "%s", $1);}
-| TK_BOOL {$$ = template( "%s", $1);}
-| TK_CHAR {$$ = template( "%s", $1);}
-| STRING  {$$ = template( "%s", $1);}
-| TK_DIGIT {$$ = template( "%s", $1);}
-| TK_DECIMAL {$$ = template( "%s", $1);}
-| IDENTIFIER {$$ = template( "%s", $1);}
-| KW_TRUE {$$ = template( "1");}
-| KW_FALSE {$$ = template( "0");}
-| '(' expr ')' {$$ = template( "(%s)",$2);}
-| math_expr {$$ = template( "%s", $1);}
-| '+' expr {$$ = template( "+%s", $2);}
-| '-' expr {$$ = template( "-%s", $2);}
-| compare_expr {$$ = $1;}
-| IDENTIFIER '(' func_attr ')' {$$ = template( "%s(%s)", $1, $3);}
-| IDENTIFIER '('  ')' {$$ = template( "%s()", $1);}
-| lib_func1 {$$ = template( "%s", $1);}
-| IDENTIFIER hooks {$$ = template( "%s%s", $1, $2);}
-;
-*/
-
-expression: INT 				{$$ = template( "%s", $1);}
-					  | REAL				{$$ = template( "%s", $1);}
-					  | STRING 				{$$ = template( "%s", $1);}
-						| IDENT				{$$ = template( "%s", $1);}
-						| TK_BOOL_TRUE			{$$ = template( "1");}
-						| TK_BOOL_FALSE			{$$ = template( "0");}
-						| TK_CHAR				{$$ = template( "%s", $1);}
-						| TK_DIGIT				{$$ = template( "%s", $1);}
-						| TK_PLUS expression 			{$$ = template( "+%s", $2);}
-						| TK_MINUS expression 		{$$ = template( "-%s", $2);}
-						| TK_LPAR expression TK_RPAR {$$ = template( "(%s)",$2);}
-						| mathematics {$$ = template( "%s", $1);}
-						| compare {$$ = $1;}
-						| IDENT TK_LPAR function TK_RPAR {$$ = template( "%s(%s)", $1, $3);}
-						| IDENT TK_LPAR TK_RPAR  {$$ = template( "%s()", $1);}
-						| IDENT brackets  {$$ = template( "%s%s", $1, $2);}
-										|
 
 %%
 
