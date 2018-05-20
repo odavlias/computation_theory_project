@@ -23,7 +23,7 @@ program useless;
 
     begin
         j := (integer) (N - n) + cube(k);
-        writeString("Computed (N-n)+k^3 = "); 
+        writeString("Computed (N-n)+k^3 = ");
         writeInteger(j); nl()
     end;
 
@@ -32,7 +32,7 @@ program useless;
         writeString(prompt);
         result := readInteger();
         writeString('You typed: ');
-        writeInteger(result); 
+        writeInteger(result);
         nl();
         return
     end;

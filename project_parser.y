@@ -188,19 +188,19 @@ subroutines: function  { $$ = template("%s", $1); }
 
 function:  function_header procedure_declarations procedure_body TK_COLON TK_IDENT{ $$ = template("%s{\n\t%s\n%s} %s %s", $1, $2, $3, $4, $5); };
 
-function_header:KW_FUNCTION TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_SEMICOLON  { $$ = template("void %s(%s)", $2, $4); };
+function_header: KW_FUNCTION TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_COLON data_type TK_SEMICOLON  { $$ = template("%s %s(%s)", $7, $2, $4); };
 
-procedure: procedure_header procedure_declarations procedure_body { $$ = template("%s{\n\t%s\n%s}", $1, $2, $3); };
+procedure: procedure_header procedure_declarations procedure_body  { $$ = template("%s{\n\t%s\n%s}", $1, $2, $3); };
 
 procedure_header: KW_PROCEDURE TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_SEMICOLON  { $$ = template("void %s(%s)", $2, $4); };
 
 subroutine_arguments: { $$ = template(""); }
 										 | TK_IDENT TK_COLON data_type { $$ = template("%s %s", $3, $1); }
-										 | subroutine_arguments TK_COMMA TK_IDENT TK_COLON data_type { $$ = template("%s, %s %s", $1, $5, $3); };
+										 | subroutine_arguments TK_SEMICOLON TK_IDENT TK_COLON data_type { $$ = template("%s, %s %s", $1, $5, $3); };
 
 procedure_declarations: program_declarations  { $$ = template("%s", $1); };
 
-procedure_body: program_body  { $$ = template("%s", $1); };
+procedure_body: program_body TK_SEMICOLON  { $$ = template("%s", $1); };
 
 program_body: KW_BEGIN commands KW_END  { $$ = template("{/n %s /n }\n", $2); };
 
@@ -274,9 +274,9 @@ call_subroutine: default_subroutine  { $$ = template("%s", $1); }
 								 | call_function  { $$ = template("%s", $1); }
 								 | call_procedure  { $$ = template("%s", $1); };
 
-default_subroutine: KW_WRITESTRING TK_LPAR expression TK_RPAR  { $$ = template("writeString(%s);", $3); }
-										| KW_WRITEINTEGER TK_LPAR expression TK_RPAR  { $$ = template("writeInteger(%s);", $3); }
-										| KW_WRITEREAL TK_LPAR expression TK_RPAR  { $$ = template("writeReal(%s);", $3); }
+default_subroutine: KW_WRITESTRING TK_LPAR TK_STRING TK_RPAR  { $$ = template("writeString(%s);", $3); }
+										| KW_WRITEINTEGER TK_LPAR TK_INT TK_RPAR  { $$ = template("writeInteger(%s);", $3); }
+										| KW_WRITEREAL TK_LPAR TK_REAL TK_RPAR  { $$ = template("writeReal(%s);", $3); }
 										| TK_IDENT TK_ASSIGN KW_READSTRING  { $$ = template("%s = readString();", $1); }
 										| TK_IDENT TK_ASSIGN KW_READINTEGER  { $$ = template("%s = readInteger();", $1); }
 										| TK_IDENT TK_ASSIGN KW_READREAL  { $$ = template("%s = readReal();", $1); };
