@@ -1,8 +1,9 @@
 %{
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "cgen.h"
-#include "ptuclib.h"
 
 extern int yylex(void);
 extern int line_num;
@@ -13,6 +14,8 @@ extern int line_num;
 	char* crepr;
 }
 
+%define parse.error verbose
+
 /* Basic data types tokens */
 %token <crepr> TK_IDENT
 %token <crepr> TK_INT
@@ -22,32 +25,34 @@ extern int line_num;
 %token TK_BOOL_FALSE
 
 /* Operators */
-%token TK_PLUS
-%token TK_MINUS
-%token TK_MULTIPLY
-%token TK_DIVIDE
-%token TK_MOD
-%token TK_EQUAL
-%token TK_NOTEQUAL
-%token TK_SMALLER
-%token TK_GREATER
-%token TK_SMALLEREQUAL
-%token TK_GREATER_EQUAL
-%token TK_AND
-%token TK_OR
-%token TK_NOT
+%left TK_PLUS
+%left TK_MINUS
+%left TK_MULTIPLY
+%left TK_DIVIDE
+%left TK_DIV
+%left TK_MOD
+%left TK_EQUAL
+%left TK_NOTEQUAL
+%left TK_SMALLER
+%left TK_GREATER
+%left TK_SMALLEREQUAL
+%left TK_GREATER_EQUAL
+%left TK_AND
+%left TK_OR
+%right TK_NOT
 
 /* Delimiters */
-%token TK_LPAR
-%token TK_RPAR
-%token TK_SEMCOLUMN
-%token TK_COMMA
-%token TK_LBRACKET
-%token TK_RBRACKET
-%token TK_COLON
-%token TK_POINT
-
-%token TK_ASSIGN
+%token <crepr> TK_LPAR
+%token <crepr> TK_RPAR
+%token <crepr> TK_SEMICOLON
+%left <crepr> TK_COMMA
+%token <crepr> TK_LBRACKET
+%token <crepr> TK_RBRACKET
+%token <crepr> TK_COLON
+%token <crepr> TK_POINT
+%token <crepr> TK_DIGIT
+%token <crepr> TK_CHAR
+%token <crepr> TK_ASSIGN
 
 %token <crepr> KW_ARRAY
 
@@ -60,14 +65,11 @@ extern int line_num;
 %token KW_DO
 %token KW_ELSE
 %token KW_FOR
-%token KW_END
 %token KW_FUNCTION
 %token KW_GOTO
 %token KW_IF
 %token <crepr> KW_INTEGER
 %token <crepr> KW_VAR
-%token KW_NOT
-%token KW_OR
 %token <crepr> KW_OF
 %token KW_WHILE
 %token KW_PROCEDURE
@@ -86,12 +88,6 @@ extern int line_num;
 %token KW_WRITESTRING
 %token KW_WRITEINTEGER
 %token KW_WRITEREAL
-
-
-
-
-
-
 
 %start program
 
@@ -133,10 +129,9 @@ extern int line_num;
 %type <crepr> expression
 %type <crepr> mathematics
 %type <crepr> compare
-
-
-
-
+%type <crepr> call_arguments_list
+%type <crepr>	variables_declaration_body
+%type <crepr> declaring
 %%
 
 /* Program consists of 4 parts (3 mandatory and 1 optional) *
@@ -158,7 +153,7 @@ program: program_header program_declarations program_body program_end  {
 };
 
 /* Program header follows the template: program <program_name>;*/
-program_header: KW_PROGRAM TK_IDENT TK_SEMCOLUMN { $$ = $2 };
+program_header: KW_PROGRAM TK_IDENT TK_SEMICOLON { $$ = template("%s", $2); };
 
 /* program_declarations is optional *
  * it may include:                  *
@@ -167,40 +162,39 @@ program_header: KW_PROGRAM TK_IDENT TK_SEMCOLUMN { $$ = $2 };
  * * subroutines                    *
  ************************************/
 program_declarations: { $$ = template(""); }
-										  | program_declarations types_declaration  { $$ = template("%s\n%s", $1, $2); }
-											| program_declarations variables_declaration  { $$ = template("%s\n%s", $1, $2); }
+										  | program_declarations declaring  { $$ = template("%s\n%s", $1, $2); }
 											| program_declarations subroutines  { $$ = template("%s\n%s", $1, $2); };
 
+declaring: types_declaration { $$ = template("%s", $1); }
+					 | variables_declaration  { $$ = template("%s", $1); };
 /* */
 types_declaration: KW_TYPE program_types  { $$ = template("%s", $2); };
 
-program_types: TK_IDENT TK_EQUAL data_type TK_SEMCOLUMN  { $$ = template("typedef %s %s;", $3, $1); };
-							 program_types TK_IDENT TK_EQUAL data_type TK_SEMCOLUMN  { $$ = template("%s\ntypedef %s %s;", $1, $4, $2); };
+program_types: TK_IDENT TK_EQUAL data_type TK_SEMICOLON  { $$ = template("typedef %s %s;", $3, $1); };
+							 | program_types TK_IDENT TK_EQUAL data_type TK_SEMICOLON  { $$ = template("%s\ntypedef %s %s;", $1, $4, $2); };
 
-variables_declaration: { $$ = template(""); }
-											 | KW_VAR variables_declaration_body  { $$ = template("%s", $2); };
+variables_declaration: KW_VAR variables_declaration_body  { $$ = template("%s", $2); };
 
-variables_declaration_body: identifiers TK_COLON data_type TK_SEMCOLUMN  { $$ = template("%s %s;", $3, $1); }
-														| variables_declaration_body identifiers TK_COLON data_type TK_SEMCOLUMN  { $$ = template("%s\n%s %s;", $1, $4, %2); };
+variables_declaration_body: identifiers TK_COLON data_type TK_SEMICOLON  { $$ = template("%s %s;", $3, $1); }
+														| variables_declaration_body identifiers TK_COLON data_type TK_SEMICOLON  { $$ = template("%s\n%s %s;", $1, $4, %2); };
 
 identifiers: TK_IDENT  { $$ = template("%s", $1); }
 						 | identifiers TK_COMMA TK_IDENT  { $$ = template("%s, %s", $1, $3); };
 
-subroutines: { $$ = template(""); }
-						 | subroutines TK_SEMCOLUMN function  { $$ = template("%s\n%s", $1, $3); }
-						 | subroutines TK_SEMCOLUMN procedure  { $$ = template("%s\n%s", $1, $3); };
+subroutines: function  { $$ = template("%s", $1); }
+						 | procedure  { $$ = template("%s", $1); };
 
 function:  function_header procedure_declarations procedure_body TK_COLON TK_IDENT{ $$ = template("%s{\n\t%s\n%s} %s %s", $1, $2, $3, $4, $5); };
 
-function_header:KW_FUNCTION TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_SEMCOLUMN  { $$ = template("void %s(%s)", $2, $4); };
+function_header:KW_FUNCTION TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_SEMICOLON  { $$ = template("void %s(%s)", $2, $4); };
 
 procedure: procedure_header procedure_declarations procedure_body { $$ = template("%s{\n\t%s\n%s}", $1, $2, $3); };
 
-procedure_header: KW_PROCEDURE TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_SEMCOLUMN  { $$ = template("void %s(%s)", $2, $4); };
+procedure_header: KW_PROCEDURE TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_SEMICOLON  { $$ = template("void %s(%s)", $2, $4); };
 
 subroutine_arguments: { $$ = template(""); }
 										 | TK_IDENT TK_COLON data_type { $$ = template("%s %s", $3, $1); }
-										 | procedure_arguments TK_COMMA TK_IDENT TK_COLON data_type { $$ = template("%s, %s %s", $1, $5, $3); };
+										 | subroutine_arguments TK_COMMA TK_IDENT TK_COLON data_type { $$ = template("%s, %s %s", $1, $5, $3); };
 
 procedure_declarations: program_declarations  { $$ = template("%s", $1); };
 
@@ -220,7 +214,7 @@ data_type: basic_data_type  { $$ = template($1); }
 					 | KW_ARRAY KW_OF basic_data_type  { $$ = template("%s*", $3); };
 
 brackets: TK_LBRACKET expression TK_RBRACKET  { $$ = template("[%s]", $2); }
-					brakets TK_LBRACKET expression TK_RBRACKET  { $$ = template("%s [%s]", $1, $3); };
+					| brackets TK_LBRACKET expression TK_RBRACKET  { $$ = template("%s [%s]", $1, $3); };
 
 /** Commands */
 
@@ -230,7 +224,7 @@ complex_command: KW_BEGIN command_list KW_END { $$ = template("%s", $2); };
 /* command list */
 command_list: { $$ = template(""); }
 							| command { $$ = template("%s", $1); }
-							| command_list TK_SEMCOLUMN command { $$ = template("%s\n%s", $1, $2); };
+							| command_list TK_SEMICOLON command { $$ = template("%s\n%s", $1, $2); };
 
 command: complex_command  { $$ = template("%s", $1); }
 				 | assign_command  { $$ = template("%s", $1); }
@@ -276,7 +270,7 @@ default_subroutine: KW_WRITESTRING TK_LPAR expression TK_RPAR  { $$ = template("
 										| TK_IDENT TK_ASSIGN KW_READINTEGER  { $$ = template("%s = readInteger();", $1); }
 										| TK_IDENT TK_ASSIGN KW_READREAL  { $$ = template("%s = readReal();", $1); };
 
-call_function: TK_IDENT TK_ASSIGN TK_LPAR TK_IDENT call_arguments TK_RPAR  { $$ = template("%s = %s(%s);", $1, $4, $5); };
+call_function: TK_IDENT TK_ASSIGN TK_IDENT TK_LPAR call_arguments TK_RPAR  { $$ = template("%s = %s(%s);", $1, $3, $5); };
 
 call_procedure: TK_IDENT TK_LPAR call_arguments TK_RPAR  { $$ = template("%s(%s);", $1, $3); };
 
@@ -286,37 +280,42 @@ call_arguments: { $$ = template(""); }
 call_arguments_list: expression  { $$ = template("%s", $1); }
 										 | call_arguments_list TK_COMMA expression  { $$ = template("%s, %s", $1, $2); };
 
-expression: TK_INT 				{$$ = template( "%s", $1); }
-					  | TK_REAL				{$$ = template( "%s", $1); }
-					  | TK_STRING 				{$$ = template( "%s", $1); }
-						| TK_IDENT				{$$ = template( "%s", $1); }
-						| TK_BOOL_TRUE			{$$ = template( "1"); }
-						| TK_BOOL_FALSE			{$$ = template( "0"); }
-						| TK_CHAR				{$$ = template( "%s", $1); }
-						| TK_DIGIT				{$$ = template( "%s", $1); }
-						| TK_NOT expression {$$ = template( "%s", $2); }
-						| TK_PLUS expression 			{$$ = template( "+%s", $2); }
-						| TK_MINUS expression 		{$$ = template( "-%s", $2); }
-						| TK_LPAR expression TK_RPAR {$$ = template( "(%s)",$2); }
-						| mathematics {$$ = template( "%s", $1); }
-						| compare {$$ = $1; }
-						| TK_IDENT TK_LPAR function TK_RPAR {$$ = template( "%s(%s)", $1, $3); }
-						| TK_IDENT TK_LPAR TK_RPAR  {$$ = template( "%s()", $1); }
-						| TK_IDENT brackets  {$$ = template( "%s%s", $1, $2); }
-						| TK_IDENT '(' ')' ';' {$$ = template( "%s();\n", $1); };
+expression: TK_INT  { $$ = template( "%s", $1); }
+					  | TK_REAL  { $$ = template( "%s", $1); }
+					  | TK_STRING  { $$ = template( "%s", $1); }
+						| TK_IDENT  { $$ = template( "%s", $1); }
+						| TK_BOOL_TRUE  { $$ = template( "1"); }
+						| TK_BOOL_FALSE  { $$ = template( "0"); }
+						| TK_CHAR  { $$ = template( "%s", $1); }
+						| TK_DIGIT  { $$ = template( "%s", $1); }
+						| TK_PLUS expression  { $$ = template( "+%s", $2); }
+						| TK_MINUS expression  { $$ = template( "-%s", $2); }
+						| TK_LPAR expression TK_RPAR  { $$ = template( "(%s)",$2); }
+						| mathematics  { $$ = template( "%s", $1); }
+						| compare  { $$ = $1; }
+						| TK_IDENT TK_LPAR function TK_RPAR  { $$ = template( "%s(%s)", $1, $3); }
+						| TK_IDENT TK_LPAR TK_RPAR  { $$ = template( "%s()", $1); }
+						| TK_IDENT brackets  { $$ = template( "%s%s", $1, $2); }
+						| TK_IDENT TK_LPAR expression TK_RPAR TK_SEMICOLON  { $$ = template( "%s();\n", $1); };
 
 
-mathematics:  expression TK_DIVIDE  expression {$$ = template( "%s/%s", $1, $3); }
-						| expression TK_MOD expression {$$ = template( "%s % %s", $1, $3); }
-						| expression TK_PLUS  expression {$$ = template( "%s+%s", $1, $3); }
-						| expression TK_MINUS  expression {$$ = template( "%s-%s", $1, $3); };
+mathematics:  expression TK_DIVIDE expression  { $$ = template("%s/%s", $1, $3); }
+							| expression TK_MOD expression  { $$ = template("%s % %s", $1, $3); }
+							| expression TK_PLUS expression  { $$ = template("%s+%s", $1, $3); }
+							| expression TK_MINUS expression  { $$ = template("%s-%s", $1, $3); }
+							| expression TK_DIV expression  { $$ = template("div(%s, %s)", $1, $3); }
+							| expression TK_MULTIPLY expression  { $$ = template("%s * %s", $1, $3); }
+							| expression TK_AND expression  { $$ = template("%s && %s", $1, $3); }
+							| expression TK_OR expression  { $$ = template("%s || %s", $1, $3); }
+							| TK_NOT expression  { $$ = template("! %s", $2); };
 
 
-compare: expression TK_GREATER expression {$$ = template( "%s > %s", $1, $3); }
-			 | expression TK_GREATER_EQUAL expression {$$ = template( "%s >= %s", $1, $3); }
-			 | expression TK_EQUAL expression {$$ = template( "%s==%s", $1, $3); }
-			 | expression TK_SMALLER expression {$$ = template( "%s < %s", $1, $3); }
-			 | expression TK_SMALLEREQUAL expression {$$ = template( "%s <= %s", $1, $3); };
+compare: expression TK_GREATER expression  { $$ = template("%s > %s", $1, $3); }
+			 	 | expression TK_GREATER_EQUAL expression  { $$ = template("%s >= %s", $1, $3); }
+			   | expression TK_EQUAL expression  { $$ = template("%s==%s", $1, $3); }
+			   | expression TK_SMALLER expression  { $$ = template("%s < %s", $1, $3); }
+			   | expression TK_SMALLEREQUAL expression  { $$ = template("%s <= %s", $1, $3); }
+				 | expression TK_NOTEQUAL expression  { $$ = template("%s != %s", $1, $3); };
 
 
 %%

@@ -3,6 +3,7 @@
   #include <assert.h>
   #include <string.h>
   #include "cgen.h"
+  #include "project_parser.tab.h"
 
 
   int lineNum = 1;
@@ -70,7 +71,7 @@ char            { printf("token KW_CHAR: %s in line num %d\n", yytext, lineNum);
 begin           { printf("token KW_BEGIN: %s in line num %d\n", yytext, lineNum);
                   return KW_BEGIN; }
 div             { printf("token KW_DIV: %s in line num %d\n", yytext, lineNum);
-                  return TK_DIVIDE; }
+                  return TK_DIV; }
 do              { printf("token KW_DO: %s in line num %d\n", yytext, lineNum);
                   return KW_DO; }
 else            { printf("token KW_ELSE: %s in line num %d\n", yytext, lineNum);
@@ -95,7 +96,7 @@ mod             { printf("token KW_MOD: %s in line num %d\n", yytext, lineNum);
                   return TK_MOD; }
 not             { printf("token KW_NOT: %s in line num %d\n", yytext, lineNum);
                   return TK_NOT; }
-or              { printf("token KW_OR: %s in line num %d\n", yytext, lineNum);
+or              { printf("token TK_OR: %s in line num %d\n", yytext, lineNum);
                   return TK_OR; }
 of              { printf("token KW_OF: %s in line num %d\n", yytext, lineNum);
                   return KW_OF; }
@@ -192,7 +193,7 @@ writeReal       { printf("token KW_WRITEREAL: %s in line num %d\n", yytext, line
 ")"		{ printf("token ): %s in line num %d\n", yytext, lineNum);
         return TK_RPAR;}
 ";"		{ printf("token ;: %s in line num %d\n", yytext, lineNum);
-        return TK_SEMCOLUMN;}
+        return TK_SEMICOLON;}
 ","		{ printf("token ,: %s in line num %d\n", yytext, lineNum);
         return TK_COMMA;}
 "["		{ printf("token [: %s in line num %d\n", yytext, lineNum);

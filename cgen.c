@@ -43,7 +43,7 @@ char* template(const char* pat, ...)
 char* string_ptuc2c(char* P)
 {
 	/*
-		This implementation is 
+		This implementation is
 		***** NOT CORRECT ACCORDING TO THE PROJECT ******
 	*/
 
@@ -60,7 +60,7 @@ char* string_ptuc2c(char* P)
 
 
 /*
-	Report errors 
+	Report errors
 */
  void yyerror (char const *pat, ...) {
  	va_list arg;
@@ -73,12 +73,8 @@ char* string_ptuc2c(char* P)
 
 int yyerror_count = 0;
 
-const char* c_prologue = 
+const char* c_prologue =
 "#include \"ptuclib.h\"\n"
+"#include <stdio.h>"
 "\n"
 ;
-
-
-
-
-
