@@ -5,8 +5,12 @@
 #include <string.h>
 #include "cgen.h"
 
+#define FILENAME "output.c"
+
 extern int yylex(void);
 extern int line_num;
+
+FILE *outputFile;
 
 %}
 
@@ -149,10 +153,12 @@ program: program_header program_declarations program_body program_end  {
 		Check for any errors and generate output.
 	*/
 	if(yyerror_count==0) {
-		puts(c_prologue); // include etc
-		printf("/* program  %s */ \n\n", $1); // program name as comment
-		printf($2); // declaration part
-		printf("int main() %s \n", $3); // program main
+		outputFile = fopen(FILENAME, "a");
+		fprintf(outputFile, c_prologue); // include etc
+		fprintf(outputFile, "/* program  %s */ \n\n", $1); // program name as comment
+		fprintf(outputFile, $2); // declaration part
+		fprintf(outputFile, "int main() %s \n", $3); // program main
+		fclose(outputFile);
 	}
 };
 
@@ -188,11 +194,11 @@ identifiers: TK_IDENT  { $$ = template("%s", $1); }
 subroutines: function  { $$ = template("%s", $1); }
 						 | procedure  { $$ = template("%s", $1); };
 
-function:  function_header procedure_declarations procedure_body  { $$ = template("%s{\n\t%s\n%s}", $1, $2, $3); };
+function:  function_header procedure_declarations procedure_body  { $$ = template("%s{\n%s\n%s\n}\n", $1, $2, $3); };
 
 function_header: KW_FUNCTION TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_COLON data_type TK_SEMICOLON  { $$ = template("%s %s(%s)", $7, $2, $4); };
 
-procedure: procedure_header procedure_declarations procedure_body  { $$ = template("%s{\n\t%s\n%s}", $1, $2, $3); };
+procedure: procedure_header procedure_declarations procedure_body  { $$ = template("%s{\n%s\n%s\n}\n", $1, $2, $3); };
 
 procedure_header: KW_PROCEDURE TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_SEMICOLON  { $$ = template("void %s(%s)", $2, $4); };
 

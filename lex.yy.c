@@ -625,8 +625,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "firtsTry.l"
-#line 2 "firtsTry.l"
+#line 1 "project_lexer.l"
+#line 2 "project_lexer.l"
   #include <stdio.h>
   #include <assert.h>
   #include <string.h>
@@ -871,7 +871,7 @@ YY_DECL
 		}
 
 	{
-#line 36 "firtsTry.l"
+#line 36 "project_lexer.l"
 
 
 #line 878 "lex.yy.c"
@@ -933,12 +933,12 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 38 "firtsTry.l"
+#line 38 "project_lexer.l"
 BEGIN(macro);
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 39 "firtsTry.l"
+#line 39 "project_lexer.l"
 {
                 /* Store macro name */
                 char* name = strdup(yytext);
@@ -960,459 +960,459 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 61 "firtsTry.l"
+#line 61 "project_lexer.l"
 { printf("token KW_AND: %s in line num %d\n", yytext, line_num);
                   return TK_AND; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 63 "firtsTry.l"
+#line 63 "project_lexer.l"
 { printf("token KW_ARRAY: %s in line num %d\n", yytext, line_num);
                   return KW_ARRAY; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 65 "firtsTry.l"
+#line 65 "project_lexer.l"
 { printf("token KW_BOOLEAN: %s in line num %d\n", yytext, line_num);
                   yylval.crepr = strdup(yytext);
                   return KW_BOOLEAN; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 68 "firtsTry.l"
+#line 68 "project_lexer.l"
 { printf("token KW_CHAR: %s in line num %d\n", yytext, line_num);
                   yylval.crepr = strdup(yytext);
                   return KW_CHAR; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 71 "firtsTry.l"
+#line 71 "project_lexer.l"
 { printf("token KW_BEGIN: %s in line num %d\n", yytext, line_num);
                   return KW_BEGIN; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 73 "firtsTry.l"
+#line 73 "project_lexer.l"
 { printf("token KW_DIV: %s in line num %d\n", yytext, line_num);
                   return TK_DIV; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 75 "firtsTry.l"
+#line 75 "project_lexer.l"
 { printf("token KW_DO: %s in line num %d\n", yytext, line_num);
                   return KW_DO; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 77 "firtsTry.l"
+#line 77 "project_lexer.l"
 { printf("token KW_ELSE: %s in line num %d\n", yytext, line_num);
                   return KW_ELSE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 79 "firtsTry.l"
+#line 79 "project_lexer.l"
 { printf("token KW_FOR: %s in line num %d\n", yytext, line_num);
                   return KW_FOR; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 81 "firtsTry.l"
+#line 81 "project_lexer.l"
 { printf("token KW_END: %s in line num %d\n", yytext, line_num);
                   return KW_END; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 83 "firtsTry.l"
+#line 83 "project_lexer.l"
 { printf("token KW_FUNCTION: %s in line num %d\n", yytext, line_num);
                   return KW_FUNCTION; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 85 "firtsTry.l"
+#line 85 "project_lexer.l"
 { printf("token KW_GOTO: %s in line num %d\n", yytext, line_num);
                   return KW_GOTO; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 87 "firtsTry.l"
+#line 87 "project_lexer.l"
 { printf("token KW_IF: %s in line num %d\n", yytext, line_num);
                   return KW_IF; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 89 "firtsTry.l"
+#line 89 "project_lexer.l"
 { printf("token KW_INTEGER: %s in line num %d\n", yytext, line_num);
                   yylval.crepr = strdup(yytext);
                   return KW_INTEGER; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 92 "firtsTry.l"
+#line 92 "project_lexer.l"
 { printf("token KW_VAR: %s in line num %d\n", yytext, line_num);
                   yylval.crepr = strdup(yytext);
                   return KW_VAR; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 95 "firtsTry.l"
+#line 95 "project_lexer.l"
 { printf("token KW_MOD: %s in line num %d\n", yytext, line_num);
                   return TK_MOD; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 97 "firtsTry.l"
+#line 97 "project_lexer.l"
 { printf("token KW_NOT: %s in line num %d\n", yytext, line_num);
                   return TK_NOT; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 99 "firtsTry.l"
+#line 99 "project_lexer.l"
 { printf("token TK_OR: %s in line num %d\n", yytext, line_num);
                   return TK_OR; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 101 "firtsTry.l"
+#line 101 "project_lexer.l"
 { printf("token KW_OF: %s in line num %d\n", yytext, line_num);
                   return KW_OF; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 103 "firtsTry.l"
+#line 103 "project_lexer.l"
 { printf("token KW_WHILE: %s in line num %d\n", yytext, line_num);
                   return KW_WHILE; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 105 "firtsTry.l"
+#line 105 "project_lexer.l"
 { printf("token KW_PROCEDURE: %s in line num %d\n", yytext, line_num);
                   return KW_PROCEDURE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 107 "firtsTry.l"
+#line 107 "project_lexer.l"
 { printf("token KW_PROGRAM: %s in line num %d\n", yytext, line_num);
                   return KW_PROGRAM; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 109 "firtsTry.l"
+#line 109 "project_lexer.l"
 { printf("token KW_REAL: %s in line num %d\n", yytext, line_num);
                   yylval.crepr = strdup(yytext);
                   return KW_REAL; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 112 "firtsTry.l"
+#line 112 "project_lexer.l"
 { printf("token KW_REPEAT: %s in line num %d\n", yytext, line_num);
                   return KW_REPEAT; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 114 "firtsTry.l"
+#line 114 "project_lexer.l"
 { printf("token KW_TO: %s in line num %d\n", yytext, line_num);
                   return KW_TO; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 116 "firtsTry.l"
+#line 116 "project_lexer.l"
 { printf("token KW_RESULT: %s in line num %d\n", yytext, line_num);
                   return KW_RESULT; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 118 "firtsTry.l"
+#line 118 "project_lexer.l"
 { printf("token KW_RETURN: %s in line num %d\n", yytext, line_num);
                   return KW_RETURN; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 120 "firtsTry.l"
+#line 120 "project_lexer.l"
 { printf("token KW_THEN: %s in line num %d\n", yytext, line_num);
                   return KW_THEN; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 122 "firtsTry.l"
+#line 122 "project_lexer.l"
 { printf("token KW_UNTIL: %s in line num %d\n", yytext, line_num);
                   return KW_UNTIL; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 124 "firtsTry.l"
+#line 124 "project_lexer.l"
 { printf("token KW_DOWNTO: %s in line num %d\n", yytext, line_num);
                   return KW_DOWNTO; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 126 "firtsTry.l"
+#line 126 "project_lexer.l"
 { printf("token TK_BOOL_TRUE: %s in line num %d\n", yytext, line_num);
                   return TK_BOOL_TRUE; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 128 "firtsTry.l"
+#line 128 "project_lexer.l"
 { printf("token TK_BOOL_FALSE: %s in line num %d\n", yytext, line_num);
                   return TK_BOOL_FALSE; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 130 "firtsTry.l"
+#line 130 "project_lexer.l"
 { printf("token KW_TYPE: %s in line num %d\n", yytext, line_num);
                   return KW_TYPE; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 132 "firtsTry.l"
+#line 132 "project_lexer.l"
 { printf("token KW_READSTRING: %s in line num %d\n", yytext, line_num);
                   return KW_READSTRING; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 134 "firtsTry.l"
+#line 134 "project_lexer.l"
 { printf("token KW_READINTEGER: %s in line num %d\n", yytext, line_num);
                   return KW_READINTEGER; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 136 "firtsTry.l"
+#line 136 "project_lexer.l"
 { printf("token KW_READREAL: %s in line num %d\n", yytext, line_num);
                   return KW_READREAL; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 138 "firtsTry.l"
+#line 138 "project_lexer.l"
 { printf("token KW_WRITESTRING: %s in line num %d\n", yytext, line_num);
                   return KW_WRITESTRING; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 140 "firtsTry.l"
+#line 140 "project_lexer.l"
 { printf("token KW_WRITEINTEGER: %s in line num %d\n", yytext, line_num);
                   return KW_WRITEINTEGER; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 142 "firtsTry.l"
+#line 142 "project_lexer.l"
 { printf("token KW_WRITEREAL: %s in line num %d\n", yytext, line_num);
                   return KW_WRITEREAL; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 148 "firtsTry.l"
+#line 148 "project_lexer.l"
 { printf("token TK_IDENT: %s in line num %d\n", yytext, line_num);
               yylval.crepr = strdup(yytext);
               return TK_IDENT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 151 "firtsTry.l"
+#line 151 "project_lexer.l"
 { printf("token TK_INT: %s in line num %d\n", yytext, line_num);
               yylval.crepr = strdup(yytext);
               return TK_INT; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 154 "firtsTry.l"
+#line 154 "project_lexer.l"
 { printf("token TK_REAL: %s in line num %d\n", yytext, line_num);
               yylval.crepr = strdup(yytext);
               return TK_REAL; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 157 "firtsTry.l"
+#line 157 "project_lexer.l"
 { printf("token TK_STRING: %s in line num %d\n", yytext, line_num);
               yylval.crepr = strdup(yytext);
               return TK_STRING; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 163 "firtsTry.l"
+#line 163 "project_lexer.l"
 { printf("token +: %s in line num %d\n", yytext, line_num);
               return TK_PLUS;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 165 "firtsTry.l"
+#line 165 "project_lexer.l"
 { printf("token -: %s in line num %d\n", yytext, line_num);
               return TK_MINUS;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 167 "firtsTry.l"
+#line 167 "project_lexer.l"
 { printf("token *: %s in line num %d\n", yytext, line_num);
               return TK_MULTIPLY;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 169 "firtsTry.l"
+#line 169 "project_lexer.l"
 { printf("token /: %s in line num %d\n", yytext, line_num);
               return TK_DIVIDE;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 171 "firtsTry.l"
+#line 171 "project_lexer.l"
 { printf("token =: %s in line num %d\n", yytext, line_num);
               return TK_EQUAL;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 173 "firtsTry.l"
+#line 173 "project_lexer.l"
 { printf("token TK_UNEQUAL: %s in line num %d\n", yytext, line_num);
               return TK_NOTEQUAL;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 175 "firtsTry.l"
+#line 175 "project_lexer.l"
 { printf("token <: %s in line num %d\n", yytext, line_num);
               return TK_SMALLER;}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 177 "firtsTry.l"
+#line 177 "project_lexer.l"
 { printf("token >: %s in line num %d\n", yytext, line_num);
               return TK_GREATER;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 179 "firtsTry.l"
+#line 179 "project_lexer.l"
 { printf("token TK_SMAAALLLER: %s in line num %d\n", yytext, line_num);
               return TK_SMALLEREQUAL;}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 181 "firtsTry.l"
+#line 181 "project_lexer.l"
 { printf("token TK_GREATER_EQUAL: %s in line num %d\n", yytext, line_num);
               return TK_GREATER_EQUAL;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 183 "firtsTry.l"
+#line 183 "project_lexer.l"
 { printf("token TK_AND: %s in line num %d\n", yytext, line_num);
               return TK_AND;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 185 "firtsTry.l"
+#line 185 "project_lexer.l"
 { printf("token TK_OR: %s in line num %d\n", yytext, line_num);
               return TK_OR;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 187 "firtsTry.l"
+#line 187 "project_lexer.l"
 { printf("token !: %s in line num %d\n", yytext, line_num);
               return TK_NOT;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 191 "firtsTry.l"
+#line 191 "project_lexer.l"
 { printf("token (: %s in line num %d\n", yytext, line_num);
   	    return TK_LPAR;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 193 "firtsTry.l"
+#line 193 "project_lexer.l"
 { printf("token ): %s in line num %d\n", yytext, line_num);
         return TK_RPAR;}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 195 "firtsTry.l"
+#line 195 "project_lexer.l"
 { printf("token ;: %s in line num %d\n", yytext, line_num);
         return TK_SEMICOLON;}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 197 "firtsTry.l"
+#line 197 "project_lexer.l"
 { printf("token ,: %s in line num %d\n", yytext, line_num);
         return TK_COMMA;}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 199 "firtsTry.l"
+#line 199 "project_lexer.l"
 { printf("token [: %s in line num %d\n", yytext, line_num);
         return TK_LBRACKET;}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 201 "firtsTry.l"
+#line 201 "project_lexer.l"
 { printf("token ]: %s in line num %d\n", yytext, line_num);
         return TK_RBRACKET;}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 203 "firtsTry.l"
+#line 203 "project_lexer.l"
 { printf("token :: %s in line num %d\n", yytext, line_num);
         return TK_COLON;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 205 "firtsTry.l"
+#line 205 "project_lexer.l"
 { printf("token .: %s in line num %d\n", yytext, line_num);
         return TK_POINT;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 210 "firtsTry.l"
+#line 210 "project_lexer.l"
 BEGIN(comments);
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 212 "firtsTry.l"
+#line 212 "project_lexer.l"
 
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 213 "firtsTry.l"
+#line 213 "project_lexer.l"
 
 	YY_BREAK
 case 70:
 /* rule 70 can match eol */
 YY_RULE_SETUP
-#line 214 "firtsTry.l"
+#line 214 "project_lexer.l"
 ++line_num;
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 215 "firtsTry.l"
+#line 215 "project_lexer.l"
 BEGIN(INITIAL);
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 219 "firtsTry.l"
+#line 219 "project_lexer.l"
 /* eat line comments */
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 223 "firtsTry.l"
+#line 223 "project_lexer.l"
 /* eat whitespace */
 	YY_BREAK
 case 74:
 /* rule 74 can match eol */
 YY_RULE_SETUP
-#line 224 "firtsTry.l"
+#line 224 "project_lexer.l"
 ++line_num;
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 226 "firtsTry.l"
+#line 226 "project_lexer.l"
 { printf("token TK_ASSIGN: %s in line num %d\n", yytext, line_num);
               return TK_ASSIGN ;}
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 228 "firtsTry.l"
+#line 228 "project_lexer.l"
 { printf("Line %d Lexical Error: Unrecognized literal %s\n", line_num, yytext); }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(comments):
 case YY_STATE_EOF(macro):
-#line 229 "firtsTry.l"
+#line 229 "project_lexer.l"
 return EOF;
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 231 "firtsTry.l"
+#line 231 "project_lexer.l"
 ECHO;
 	YY_BREAK
 #line 1419 "lex.yy.c"
@@ -2414,7 +2414,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 231 "firtsTry.l"
+#line 231 "project_lexer.l"
 
 
 
