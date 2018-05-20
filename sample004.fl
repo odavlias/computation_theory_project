@@ -22,14 +22,15 @@ program useless;
         end;
 
     begin
-        j := (integer) (N - n) + cube(k);
+        (*j := (integer) (N - n) + cube(k);*)
+        j := 5;
         writeString("Computed (N-n)+k^3 = ");
         writeInteger(j); nl()
     end;
 
-    function promptForInteger(prompt: string) : integer;
+    function promptForInteger(prompt: integer) : integer;
     begin
-        writeString(prompt);
+        writeInteger(prompt);
         result := readInteger();
         writeString('You typed: ');
         writeInteger(result);

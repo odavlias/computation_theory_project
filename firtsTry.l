@@ -24,7 +24,7 @@
 %}
 
 DIGIT          [0-9]
-IDENT          [a-zA-Z][{DIGIT}a-zA-Z_]*
+IDENT          [a-zA-Z][{0-9a-zA-Z_]*
 INT            {DIGIT}{DIGIT}*
 REAL           ("."{INT})|({INT}("."{INT}?)?)([eE][+-]?{INT})?
 STRING         (['](.)*['])|(["](.)*["])

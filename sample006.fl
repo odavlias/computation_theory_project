@@ -3,7 +3,7 @@
 program function_fun;
 
 type
-   intfunc = function(n: integer) : integer;
+   (* intfunc = function(n: integer) : integer; *)
    string = array of char;
 
 function fibonacci(n:integer) : integer;
@@ -26,7 +26,7 @@ function factorial(n:integer) : integer;
 var
 	fac, i: integer;
 begin
-	fac := 1; 
+	fac := 1;
 	for i:=n downto 1 do fac:=i*fac;
 	result := fac;
 	return
@@ -34,7 +34,7 @@ end;
 
 procedure eval(prompt: string; f: intfunc; val: integer);
 begin
-	writeString(prompt); 
+	writeString(prompt);
 	writeString('('); writeInteger(val); writeString(')=');
 	writeInteger(f(val));
 	writeString('\n')
@@ -44,4 +44,3 @@ begin
 	eval('Fibonacci', fibonacci, 5);
 	eval('factorial', factorial, 5)
 end.
-

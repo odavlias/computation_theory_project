@@ -7,6 +7,7 @@
 
 extern int yylex(void);
 extern int line_num;
+
 %}
 
 %union
@@ -133,6 +134,7 @@ extern int line_num;
 %type <crepr> declaring
 %type <crepr> complex_command_list
 %type <crepr> statement_commands
+%type <crepr> subroutine_end
 
 %%
 
@@ -186,7 +188,7 @@ identifiers: TK_IDENT  { $$ = template("%s", $1); }
 subroutines: function  { $$ = template("%s", $1); }
 						 | procedure  { $$ = template("%s", $1); };
 
-function:  function_header procedure_declarations procedure_body TK_COLON TK_IDENT{ $$ = template("%s{\n\t%s\n%s} %s %s", $1, $2, $3, $4, $5); };
+function:  function_header procedure_declarations procedure_body  { $$ = template("%s{\n\t%s\n%s}", $1, $2, $3); };
 
 function_header: KW_FUNCTION TK_IDENT TK_LPAR subroutine_arguments TK_RPAR TK_COLON data_type TK_SEMICOLON  { $$ = template("%s %s(%s)", $7, $2, $4); };
 
@@ -200,16 +202,18 @@ subroutine_arguments: { $$ = template(""); }
 
 procedure_declarations: program_declarations  { $$ = template("%s", $1); };
 
-procedure_body: program_body TK_SEMICOLON  { $$ = template("%s", $1); };
+procedure_body: complex_command TK_SEMICOLON { $$ = template("%s", $1); };
 
 program_body: KW_BEGIN commands KW_END  { $$ = template("{/n %s /n }\n", $2); };
 
 program_end: TK_POINT  { $$ = template(""); };
 
+subroutine_end: TK_SEMICOLON  { $$ = template(""); };
+
 basic_data_type: KW_INTEGER  { $$ = template("int"); }
 								 | KW_BOOLEAN  { $$ = template("int"); }
 								 | KW_CHAR  { $$ = template("char"); }
-								 | KW_REAL  { $$ = template("double"); }
+								 | KW_REAL  { $$ = template("double"); };
 
 data_type: basic_data_type  { $$ = template($1); }
 					 | KW_ARRAY brackets KW_OF basic_data_type  { $$ = template("%s [%s]", $4, $2); }
@@ -246,7 +250,8 @@ complex_command_list: { $$ = template(""); }
 											| complex_command_list command  { $$ = template("%s\n%s", $1, $2); }
 											| complex_command_list TK_SEMICOLON command  { $$ = template("%s\n%s", $1, $3); };
 
-statement_commands: complex_command  { $$ = template("%s", $1); };
+statement_commands: complex_command  { $$ = template("%s", $1); }
+										| special_assign  { $$ = template("%s", $1); };
 
 /* simple commands implementation */
 
@@ -274,16 +279,18 @@ call_subroutine: default_subroutine  { $$ = template("%s", $1); }
 								 | call_function  { $$ = template("%s", $1); }
 								 | call_procedure  { $$ = template("%s", $1); };
 
-default_subroutine: KW_WRITESTRING TK_LPAR TK_STRING TK_RPAR  { $$ = template("writeString(%s);", $3); }
-										| KW_WRITEINTEGER TK_LPAR TK_INT TK_RPAR  { $$ = template("writeInteger(%s);", $3); }
-										| KW_WRITEREAL TK_LPAR TK_REAL TK_RPAR  { $$ = template("writeReal(%s);", $3); }
+default_subroutine: KW_WRITESTRING TK_LPAR expression TK_RPAR  { $$ = template("writeString(%s);", $3); }
+										| KW_WRITEINTEGER TK_LPAR expression TK_RPAR  { $$ = template("writeInteger(%s);", $3); }
+										| KW_WRITEREAL TK_LPAR expression TK_RPAR  { $$ = template("writeReal(%s);", $3); }
 										| TK_IDENT TK_ASSIGN KW_READSTRING  { $$ = template("%s = readString();", $1); }
 										| TK_IDENT TK_ASSIGN KW_READINTEGER  { $$ = template("%s = readInteger();", $1); }
 										| TK_IDENT TK_ASSIGN KW_READREAL  { $$ = template("%s = readReal();", $1); };
 
-call_function: TK_IDENT TK_ASSIGN TK_IDENT TK_LPAR call_arguments TK_RPAR  { $$ = template("%s = %s(%s);", $1, $3, $5); };
+call_function: TK_IDENT TK_ASSIGN TK_IDENT TK_LPAR call_arguments TK_RPAR  { $$ = template("%s = %s(%s);", $1, $3, $5); }
+							 | KW_RESULT TK_ASSIGN TK_IDENT TK_LPAR call_arguments TK_RPAR  { $$ = template("result = %s(%s);", $3, $5); };
 
 call_procedure: TK_IDENT TK_LPAR call_arguments TK_RPAR  { $$ = template("%s(%s);", $1, $3); };
+
 
 call_arguments: { $$ = template(""); }
 								| call_arguments_list  { $$ = template("%s", $1); };

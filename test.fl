@@ -1,0 +1,21 @@
+program test;
+
+var x, y, z: integer;
+
+function cube(num:integer) : integer;
+begin
+  result := num * num * num;
+  return
+end;
+
+begin
+
+  x := 4;
+  y := 5;
+
+  z := cube(x);
+  writeInteger(z);
+
+  z := cube(y);
+  writeInteger(z)
+end.
