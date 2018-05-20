@@ -6,7 +6,7 @@
   #include "project_parser.tab.h"
 
 
-  int lineNum = 1;
+  int line_num = 1;
 
 
   int mactable_size = 0;
@@ -36,7 +36,7 @@ STRING         (['](.)*['])|(["](.)*["])
 %%
 
 @defmacro[ \r\t]+       BEGIN(macro);
-<macro>{ID}  {
+<macro>{IDENT}  {
                 /* Store macro name */
                 char* name = strdup(yytext);
                 char* def = NULL;
@@ -58,151 +58,151 @@ STRING         (['](.)*['])|(["](.)*["])
 
 
 
-and             { printf("token KW_AND: %s in line num %d\n", yytext, lineNum);
+and             { printf("token KW_AND: %s in line num %d\n", yytext, line_num);
                   return TK_AND; }
-array           { printf("token KW_ARRAY: %s in line num %d\n", yytext, lineNum);
+array           { printf("token KW_ARRAY: %s in line num %d\n", yytext, line_num);
                   return KW_ARRAY; }
-boolean         { printf("token KW_BOOLEAN: %s in line num %d\n", yytext, lineNum);
+boolean         { printf("token KW_BOOLEAN: %s in line num %d\n", yytext, line_num);
                   yylval.crepr = strdup(yytext);
                   return KW_BOOLEAN; }
-char            { printf("token KW_CHAR: %s in line num %d\n", yytext, lineNum);
+char            { printf("token KW_CHAR: %s in line num %d\n", yytext, line_num);
                   yylval.crepr = strdup(yytext);
                   return KW_CHAR; }
-begin           { printf("token KW_BEGIN: %s in line num %d\n", yytext, lineNum);
+begin           { printf("token KW_BEGIN: %s in line num %d\n", yytext, line_num);
                   return KW_BEGIN; }
-div             { printf("token KW_DIV: %s in line num %d\n", yytext, lineNum);
+div             { printf("token KW_DIV: %s in line num %d\n", yytext, line_num);
                   return TK_DIV; }
-do              { printf("token KW_DO: %s in line num %d\n", yytext, lineNum);
+do              { printf("token KW_DO: %s in line num %d\n", yytext, line_num);
                   return KW_DO; }
-else            { printf("token KW_ELSE: %s in line num %d\n", yytext, lineNum);
+else            { printf("token KW_ELSE: %s in line num %d\n", yytext, line_num);
                   return KW_ELSE; }
-for             { printf("token KW_FOR: %s in line num %d\n", yytext, lineNum);
+for             { printf("token KW_FOR: %s in line num %d\n", yytext, line_num);
                   return KW_FOR; }
-end             { printf("token KW_END: %s in line num %d\n", yytext, lineNum);
+end             { printf("token KW_END: %s in line num %d\n", yytext, line_num);
                   return KW_END; }
-function        { printf("token KW_FUNCTION: %s in line num %d\n", yytext, lineNum);
+function        { printf("token KW_FUNCTION: %s in line num %d\n", yytext, line_num);
                   return KW_FUNCTION; }
-goto            { printf("token KW_GOTO: %s in line num %d\n", yytext, lineNum);
+goto            { printf("token KW_GOTO: %s in line num %d\n", yytext, line_num);
                   return KW_GOTO; }
-if              { printf("token KW_IF: %s in line num %d\n", yytext, lineNum);
+if              { printf("token KW_IF: %s in line num %d\n", yytext, line_num);
                   return KW_IF; }
-integer         { printf("token KW_INTEGER: %s in line num %d\n", yytext, lineNum);
+integer         { printf("token KW_INTEGER: %s in line num %d\n", yytext, line_num);
                   yylval.crepr = strdup(yytext);
                   return KW_INTEGER; }
-var             { printf("token KW_VAR: %s in line num %d\n", yytext, lineNum);
+var             { printf("token KW_VAR: %s in line num %d\n", yytext, line_num);
                   yylval.crepr = strdup(yytext);
                   return KW_VAR; }
-mod             { printf("token KW_MOD: %s in line num %d\n", yytext, lineNum);
+mod             { printf("token KW_MOD: %s in line num %d\n", yytext, line_num);
                   return TK_MOD; }
-not             { printf("token KW_NOT: %s in line num %d\n", yytext, lineNum);
+not             { printf("token KW_NOT: %s in line num %d\n", yytext, line_num);
                   return TK_NOT; }
-or              { printf("token TK_OR: %s in line num %d\n", yytext, lineNum);
+or              { printf("token TK_OR: %s in line num %d\n", yytext, line_num);
                   return TK_OR; }
-of              { printf("token KW_OF: %s in line num %d\n", yytext, lineNum);
+of              { printf("token KW_OF: %s in line num %d\n", yytext, line_num);
                   return KW_OF; }
-while           { printf("token KW_WHILE: %s in line num %d\n", yytext, lineNum);
+while           { printf("token KW_WHILE: %s in line num %d\n", yytext, line_num);
                   return KW_WHILE; }
-procedure       { printf("token KW_PROCEDURE: %s in line num %d\n", yytext, lineNum);
+procedure       { printf("token KW_PROCEDURE: %s in line num %d\n", yytext, line_num);
                   return KW_PROCEDURE; }
-program         { printf("token KW_PROGRAM: %s in line num %d\n", yytext, lineNum);
+program         { printf("token KW_PROGRAM: %s in line num %d\n", yytext, line_num);
                   return KW_PROGRAM; }
-real            { printf("token KW_REAL: %s in line num %d\n", yytext, lineNum);
+real            { printf("token KW_REAL: %s in line num %d\n", yytext, line_num);
                   yylval.crepr = strdup(yytext);
                   return KW_REAL; }
-repeat          { printf("token KW_REPEAT: %s in line num %d\n", yytext, lineNum);
+repeat          { printf("token KW_REPEAT: %s in line num %d\n", yytext, line_num);
                   return KW_REPEAT; }
-to              { printf("token KW_TO: %s in line num %d\n", yytext, lineNum);
+to              { printf("token KW_TO: %s in line num %d\n", yytext, line_num);
                   return KW_TO; }
-result          { printf("token KW_RESULT: %s in line num %d\n", yytext, lineNum);
+result          { printf("token KW_RESULT: %s in line num %d\n", yytext, line_num);
                   return KW_RESULT; }
-return          { printf("token KW_RETURN: %s in line num %d\n", yytext, lineNum);
+return          { printf("token KW_RETURN: %s in line num %d\n", yytext, line_num);
                   return KW_RETURN; }
-then            { printf("token KW_THEN: %s in line num %d\n", yytext, lineNum);
+then            { printf("token KW_THEN: %s in line num %d\n", yytext, line_num);
                   return KW_THEN; }
-until           { printf("token KW_UNTIL: %s in line num %d\n", yytext, lineNum);
+until           { printf("token KW_UNTIL: %s in line num %d\n", yytext, line_num);
                   return KW_UNTIL; }
-downto          { printf("token KW_DOWNTO: %s in line num %d\n", yytext, lineNum);
+downto          { printf("token KW_DOWNTO: %s in line num %d\n", yytext, line_num);
                   return KW_DOWNTO; }
-true            { printf("token TK_BOOL_TRUE: %s in line num %d\n", yytext, lineNum);
+true            { printf("token TK_BOOL_TRUE: %s in line num %d\n", yytext, line_num);
                   return TK_BOOL_TRUE; }
-false           { printf("token TK_BOOL_FALSE: %s in line num %d\n", yytext, lineNum);
+false           { printf("token TK_BOOL_FALSE: %s in line num %d\n", yytext, line_num);
                   return TK_BOOL_FALSE; }
-type            { printf("token KW_TYPE: %s in line num %d\n", yytext, lineNum);
+type            { printf("token KW_TYPE: %s in line num %d\n", yytext, line_num);
                   return KW_TYPE; }
-readString      { printf("token KW_READSTRING: %s in line num %d\n", yytext, lineNum);
+readString      { printf("token KW_READSTRING: %s in line num %d\n", yytext, line_num);
                   return KW_READSTRING; }
-readInteger     { printf("token KW_READINTEGER: %s in line num %d\n", yytext, lineNum);
+readInteger     { printf("token KW_READINTEGER: %s in line num %d\n", yytext, line_num);
                   return KW_READINTEGER; }
-readReal        { printf("token KW_READREAL: %s in line num %d\n", yytext, lineNum);
+readReal        { printf("token KW_READREAL: %s in line num %d\n", yytext, line_num);
                   return KW_READREAL; }
-writeString     { printf("token KW_WRITESTRING: %s in line num %d\n", yytext, lineNum);
+writeString     { printf("token KW_WRITESTRING: %s in line num %d\n", yytext, line_num);
                   return KW_WRITESTRING; }
-writeInteger    { printf("token KW_WRITEINTEGER: %s in line num %d\n", yytext, lineNum);
+writeInteger    { printf("token KW_WRITEINTEGER: %s in line num %d\n", yytext, line_num);
                   return KW_WRITEINTEGER; }
-writeReal       { printf("token KW_WRITEREAL: %s in line num %d\n", yytext, lineNum);
+writeReal       { printf("token KW_WRITEREAL: %s in line num %d\n", yytext, line_num);
                   return KW_WRITEREAL; }
 
 
 
 
-{IDENT}     { printf("token TK_ID: %s in line num %d\n", yytext, lineNum);
+{IDENT}     { printf("token TK_IDENT: %s in line num %d\n", yytext, line_num);
               yylval.crepr = strdup(yytext);
               return TK_IDENT; }
-{INT}       { printf("token TK_INT: %s in line num %d\n", yytext, lineNum);
+{INT}       { printf("token TK_INT: %s in line num %d\n", yytext, line_num);
               yylval.crepr = strdup(yytext);
               return TK_INT; }
-{REAL}      { printf("token TK_REAL: %s in line num %d\n", yytext, lineNum);
+{REAL}      { printf("token TK_REAL: %s in line num %d\n", yytext, line_num);
               yylval.crepr = strdup(yytext);
               return TK_REAL; }
-{STRING}    { printf("token TK_STRING: %s in line num %d\n", yytext, lineNum);
+{STRING}    { printf("token TK_STRING: %s in line num %d\n", yytext, line_num);
               yylval.crepr = strdup(yytext);
               return TK_STRING; }
 
 
 
-"+"         { printf("token +: %s in line num %d\n", yytext, lineNum);
+"+"         { printf("token +: %s in line num %d\n", yytext, line_num);
               return TK_PLUS;}
-"-"         { printf("token -: %s in line num %d\n", yytext, lineNum);
+"-"         { printf("token -: %s in line num %d\n", yytext, line_num);
               return TK_MINUS;}
-"*"         { printf("token *: %s in line num %d\n", yytext, lineNum);
+"*"         { printf("token *: %s in line num %d\n", yytext, line_num);
               return TK_MULTIPLY;}
-"/"         { printf("token /: %s in line num %d\n", yytext, lineNum);
+"/"         { printf("token /: %s in line num %d\n", yytext, line_num);
               return TK_DIVIDE;}
-"="	        { printf("token =: %s in line num %d\n", yytext, lineNum);
+"="	        { printf("token =: %s in line num %d\n", yytext, line_num);
               return TK_EQUAL;}
-"<>"        { printf("token TK_UNEQUAL: %s in line num %d\n", yytext, lineNum);
+"<>"        { printf("token TK_UNEQUAL: %s in line num %d\n", yytext, line_num);
               return TK_NOTEQUAL;}
-"<"	        { printf("token <: %s in line num %d\n", yytext, lineNum);
+"<"	        { printf("token <: %s in line num %d\n", yytext, line_num);
               return TK_SMALLER;}
-">"	        { printf("token >: %s in line num %d\n", yytext, lineNum);
+">"	        { printf("token >: %s in line num %d\n", yytext, line_num);
               return TK_GREATER;}
-"<="	      { printf("token TK_SMAAALLLER: %s in line num %d\n", yytext, lineNum);
+"<="	      { printf("token TK_SMAAALLLER: %s in line num %d\n", yytext, line_num);
               return TK_SMALLEREQUAL;}
-">="	      { printf("token TK_GREATER_EQUAL: %s in line num %d\n", yytext, lineNum);
+">="	      { printf("token TK_GREATER_EQUAL: %s in line num %d\n", yytext, line_num);
               return TK_GREATER_EQUAL;}
-"&&"	      { printf("token TK_AND: %s in line num %d\n", yytext, lineNum);
+"&&"	      { printf("token TK_AND: %s in line num %d\n", yytext, line_num);
               return TK_AND;}
-"||"	      { printf("token TK_OR: %s in line num %d\n", yytext, lineNum);
+"||"	      { printf("token TK_OR: %s in line num %d\n", yytext, line_num);
               return TK_OR;}
-"!"	        { printf("token !: %s in line num %d\n", yytext, lineNum);
+"!"	        { printf("token !: %s in line num %d\n", yytext, line_num);
               return TK_NOT;}
 
 
-"("	  { printf("token (: %s in line num %d\n", yytext, lineNum);
+"("	  { printf("token (: %s in line num %d\n", yytext, line_num);
   	    return TK_LPAR;}
-")"		{ printf("token ): %s in line num %d\n", yytext, lineNum);
+")"		{ printf("token ): %s in line num %d\n", yytext, line_num);
         return TK_RPAR;}
-";"		{ printf("token ;: %s in line num %d\n", yytext, lineNum);
+";"		{ printf("token ;: %s in line num %d\n", yytext, line_num);
         return TK_SEMICOLON;}
-","		{ printf("token ,: %s in line num %d\n", yytext, lineNum);
+","		{ printf("token ,: %s in line num %d\n", yytext, line_num);
         return TK_COMMA;}
-"["		{ printf("token [: %s in line num %d\n", yytext, lineNum);
+"["		{ printf("token [: %s in line num %d\n", yytext, line_num);
         return TK_LBRACKET;}
-"]"		{ printf("token ]: %s in line num %d\n", yytext, lineNum);
+"]"		{ printf("token ]: %s in line num %d\n", yytext, line_num);
         return TK_RBRACKET;}
-":"   { printf("token :: %s in line num %d\n", yytext, lineNum);
+":"   { printf("token :: %s in line num %d\n", yytext, line_num);
         return TK_COLON;}
-"."   { printf("token .: %s in line num %d\n", yytext, lineNum);
+"."   { printf("token .: %s in line num %d\n", yytext, line_num);
         return TK_POINT;}
 
 
@@ -211,7 +211,7 @@ writeReal       { printf("token KW_WRITEREAL: %s in line num %d\n", yytext, line
 
 <comments>[^*\n]*
 <comments>"*"+[^*)\n]*
-<comments>\n          ++lineNum;
+<comments>\n          ++line_num;
 <comments>"*"+")"     BEGIN(INITIAL);
 
 
@@ -221,11 +221,11 @@ writeReal       { printf("token KW_WRITEREAL: %s in line num %d\n", yytext, line
 
 
 [ \r\t]+		/* eat whitespace */
-\n 			 ++lineNum;
+\n 			 ++line_num;
 
-":="        { printf("token TK_ASSIGN: %s in line num %d\n", yytext, lineNum);
+":="        { printf("token TK_ASSIGN: %s in line num %d\n", yytext, line_num);
               return TK_ASSIGN ;}
-.           { printf("Line %d Lexical Error: Unrecognized literal %s\n", lineNum, yytext); }
+.           { printf("Line %d Lexical Error: Unrecognized literal %s\n", line_num, yytext); }
 <<EOF>>     return EOF;
 
 %%

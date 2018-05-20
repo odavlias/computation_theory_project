@@ -75,6 +75,5 @@ int yyerror_count = 0;
 
 const char* c_prologue =
 "#include \"ptuclib.h\"\n"
-"#include <stdio.h>"
 "\n"
 ;
