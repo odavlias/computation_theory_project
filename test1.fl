@@ -1,0 +1,15 @@
+program test1;
+
+(* A simple for-loop *)
+
+var my_vector: array[10] of integer;
+    i: integer;
+
+begin
+  for i := 0 to 4 do
+  begin
+    my_vector [i] := i;
+    writeInteger(my_vector[i])
+  end;
+  writeString("Done!")
+end.

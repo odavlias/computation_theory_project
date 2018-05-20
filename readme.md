@@ -13,6 +13,6 @@ This repository contains the files elaborated for the purposes of the computatio
 * project_lexer.l -> flex file
 * project_parser.y -> bison file
 * project_compiler -> compiler executable file
-* test.fl -> example FL file
-* test.c -> output C file
+* test.fl, test1.fl -> example FL files
+* test.c, test1.c -> output C files
 

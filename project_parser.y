@@ -157,7 +157,7 @@ program: program_header program_declarations program_body program_end  {
 		fprintf(outputFile, c_prologue); // include etc
 		fprintf(outputFile, "/* program  %s */ \n\n", $1); // program name as comment
 		fprintf(outputFile, $2); // declaration part
-		fprintf(outputFile, "int main() %s \n", $3); // program main
+		fprintf(outputFile, "\nint main() %s \n", $3); // program main
 		fclose(outputFile);
 	}
 };
@@ -210,7 +210,7 @@ procedure_declarations: program_declarations  { $$ = template("%s", $1); };
 
 procedure_body: complex_command TK_SEMICOLON { $$ = template("%s", $1); };
 
-program_body: KW_BEGIN commands KW_END  { $$ = template("{/n %s /n }\n", $2); };
+program_body: KW_BEGIN commands KW_END  { $$ = template("{\n%s \n}\n", $2); };
 
 program_end: TK_POINT  { $$ = template(""); };
 
@@ -261,7 +261,8 @@ statement_commands: complex_command  { $$ = template("%s", $1); }
 
 /* simple commands implementation */
 
-assign_command: TK_IDENT TK_ASSIGN expression  { $$ = template("%s = %s;", $1, $3); };
+assign_command: TK_IDENT TK_ASSIGN expression  { $$ = template("%s = %s;", $1, $3); }
+								| TK_IDENT brackets TK_ASSIGN expression  { $$ = template("%s%s = %s;", $1, $2, $4); };
 
 special_assign: KW_RESULT TK_ASSIGN expression  { $$ = template("result = %s;", $3); };
 
